@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Hospital Lumina — Valentina R. | Endocrinología</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0502; --bg2:#140804; --panel:#1e0d06; --panel2:#2a1208;
+  --border:#7a3f12; --border2:#4f240b;
+  --glow:#ffb000; --glow2:#ff4b2b; --glow3:#39ff14; --glow4:#ffd36a; --glow5:#ff7a00; --glow6:#ff6bd6;
+  --text:#ffe8c7; --muted:#c28a52; --muted2:#6d4427;
+  --mono:'Share Tech Mono',monospace; --display:'Exo 2',sans-serif; --body:'Rajdhani',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden;font-size:16px;line-height:1.5;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,176,0,0.012) 2px,rgba(255,176,0,0.012) 4px);pointer-events:none;z-index:9999;}
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* ═══ COVER/LOADING/CHECKIN/INTRO ═══ */
+#s-cover,#s-loading,#s-checkin,#s-intro{
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:24px;text-align:center;
+  background:radial-gradient(ellipse at 30% 20%,rgba(255,176,0,.11),transparent 55%),
+             radial-gradient(ellipse at 80% 80%,rgba(204,136,255,.07),transparent 50%),
+             linear-gradient(180deg,#0b0502 0%,#140804 100%);
+}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,176,0,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,176,0,.045) 1px,transparent 1px);background-size:48px 48px;animation:gridDrift 30s linear infinite;pointer-events:none;}
+@keyframes gridDrift{to{background-position:0 48px;}}
+
+/* Neuron SVG background deco */
+.neuro-deco{position:absolute;inset:0;pointer-events:none;opacity:.07;}
+
+.entry-wrap{position:relative;z-index:2;width:100%;max-width:520px;}
+.entry-badge{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--muted);border:1px solid var(--border);padding:5px 14px;margin-bottom:18px;}
+.entry-title{font-family:var(--display);font-weight:900;font-size:clamp(32px,10vw,56px);color:#fff;line-height:1;margin-bottom:8px;text-transform:uppercase;}
+.entry-title .accent{color:var(--glow);}
+.entry-sub{font-size:14px;color:#ffd8a8;line-height:1.7;margin-bottom:22px;}
+
+/* Endocrine hero illustration */
+.hero-endocrine{width:min(370px,92vw);height:215px;margin:0 auto 24px;position:relative;filter:drop-shadow(0 0 30px rgba(255,176,0,.22));}
+.endocrine-orbit{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:250px;height:135px;border:1px dashed rgba(255,176,0,.28);border-radius:50%;animation:orbitGlow 3.4s ease-in-out infinite;}
+@keyframes orbitGlow{0%,100%{opacity:.45;transform:translate(-50%,-50%) scale(1)}50%{opacity:.9;transform:translate(-50%,-50%) scale(1.03)}}
+.pancreas-core{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%) rotate(-8deg);width:172px;height:70px;background:radial-gradient(ellipse at 35% 45%,#ffd36a,#ff9b1a 48%,#5a2107 100%);border:1px solid rgba(255,211,106,.55);border-radius:58% 42% 46% 58%/58% 50% 50% 42%;box-shadow:0 0 34px rgba(255,176,0,.22),inset 0 0 20px rgba(255,255,255,.08);}
+.pancreas-core::before{content:'';position:absolute;left:-20px;top:9px;width:52px;height:52px;background:radial-gradient(circle,#ffcf70,#b55212 72%,#4b1805);border:1px solid rgba(255,211,106,.45);border-radius:50%;box-shadow:0 0 18px rgba(255,122,0,.2);}
+.pancreas-core::after{content:'';position:absolute;right:-28px;top:24px;width:52px;height:20px;background:linear-gradient(90deg,#f1a530,#6b2606);border:1px solid rgba(255,211,106,.35);border-left:none;border-radius:0 20px 20px 0;}
+.islet{position:absolute;width:12px;height:12px;border-radius:50%;background:#fff1b8;border:1px solid rgba(255,176,0,.8);box-shadow:0 0 12px rgba(255,176,0,.65);animation:isletPulse 2s ease infinite;}
+.islet.i1{left:130px;top:86px}.islet.i2{left:171px;top:102px;animation-delay:.5s}.islet.i3{left:207px;top:92px;animation-delay:.9s}
+@keyframes isletPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.72);opacity:.5}}
+.glucose-node{position:absolute;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle,#fff9d8,#ffb000 55%,#7b2f08);border:1px solid rgba(255,211,106,.75);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;color:#2b0f03;font-weight:bold;box-shadow:0 0 18px rgba(255,176,0,.38);animation:floatHormone 3s ease-in-out infinite;}
+.glucose-node.g1{left:42px;top:52px}.glucose-node.g2{right:45px;top:48px;animation-delay:.6s}.glucose-node.g3{left:78px;bottom:42px;animation-delay:1s}.glucose-node.g4{right:82px;bottom:34px;animation-delay:1.4s}
+@keyframes floatHormone{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hormone-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--glow),transparent);opacity:.62;animation:hormoneFlash 2.4s ease infinite;}
+@keyframes hormoneFlash{0%,100%{opacity:.12}50%{opacity:.72}}
+.hero-label{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--glow4);background:rgba(20,8,4,.78);border:1px solid rgba(255,176,0,.25);padding:5px 12px;white-space:nowrap;}
+/* Floating metabolic dots */
+.neuron-dot{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--glow);box-shadow:0 0 8px var(--glow);animation:neuronPulse 2s ease infinite;}
+@keyframes neuronPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+.synapse-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--glow),transparent);opacity:.4;animation:synapseFlash 3s ease infinite;}
+@keyframes synapseFlash{0%,100%{opacity:.1}50%{opacity:.5}}
+
+.loading-shell,.checkin-shell,.brief-shell{background:rgba(6,20,10,.9);border:1px solid var(--border);padding:18px;text-align:left;box-shadow:0 0 34px rgba(255,176,0,.065);backdrop-filter:blur(8px);}
+.loading-shell{max-width:440px;margin:0 auto;}
+.loading-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:10px;}
+.loading-bar-wrap{height:12px;background:#100702;border:1px solid var(--border2);overflow:hidden;margin:14px 0 10px;}
+.loading-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--glow),#ffe0a3);transition:width .35s ease;}
+.loading-steps{display:grid;gap:8px;margin-top:12px;}
+.loading-step{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:1px;}
+.loading-step.active,.loading-step.done{color:var(--glow);}
+.checkin-shell{max-width:460px;margin:0 auto;}
+.checkin-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:10px;}
+.scanner-box{background:linear-gradient(180deg,rgba(255,176,0,.11),rgba(255,176,0,.025));border:1px solid rgba(255,176,0,.24);padding:14px;margin:14px 0 18px;}
+.scanner-line{height:2px;width:100%;background:var(--glow);box-shadow:0 0 14px var(--glow);animation:scannerMove 1.8s linear infinite;}
+@keyframes scannerMove{0%{transform:translateY(0)}50%{transform:translateY(38px)}100%{transform:translateY(0)}}
+.frontis-mini{width:100%;height:88px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.03);margin-top:10px;position:relative;overflow:hidden;}
+.frontis-mini::before{content:'CONTROL DE INGRESO · UNIDAD ENDOCRINA';position:absolute;left:50%;top:12px;transform:translateX(-50%);font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--glow);}
+.resident-input{background:rgba(255,176,0,.045);border:none;border-bottom:2px solid var(--glow);color:#fff;font-family:var(--mono);font-size:18px;padding:10px 16px;width:100%;outline:none;text-align:center;letter-spacing:2px;margin-bottom:16px;}
+.resident-input::placeholder{color:var(--muted);font-size:12px;}
+.brief-shell{max-width:480px;margin:0 auto;}
+.brief-label{font-family:var(--mono);font-size:10px;letter-spacing:3px;color:var(--glow2);margin-bottom:10px;}
+.brief-vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 18px;}
+.brief-vital{background:var(--bg);border:1px solid var(--border2);padding:10px;text-align:center;}
+.brief-vital strong{display:block;font-family:var(--mono);font-size:20px;color:var(--glow2);}
+.brief-vital span{font-family:var(--mono);font-size:9px;color:var(--muted);}
+.epic-btn{display:block;width:100%;background:transparent;border:2px solid var(--glow);color:var(--glow);font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:3px;padding:16px;cursor:pointer;transition:all .25s;text-transform:uppercase;}
+.epic-btn:hover,.epic-btn:active{background:var(--glow);color:var(--bg);}
+.epic-btn:disabled{opacity:.3;cursor:not-allowed;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ═══ HUD ═══ */
+.hud{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;flex-wrap:wrap;}
+.hud-title{font-family:var(--mono);font-size:10px;color:var(--glow);letter-spacing:2px;flex:1;min-width:100px;}
+.hud-resident{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap;}
+.hud-resident span{color:var(--glow4);}
+.stress-display{display:flex;align-items:center;gap:6px;}
+.stress-label{font-family:var(--mono);font-size:9px;color:var(--muted);}
+.stress-track{width:60px;height:8px;background:var(--bg);border:1px solid var(--border2);overflow:hidden;}
+.stress-fill{height:100%;width:20%;background:var(--glow3);transition:width .5s ease,background .5s ease;}
+.hud-phase{font-family:var(--mono);font-size:9px;background:rgba(255,176,0,.11);border:1px solid rgba(255,176,0,.24);color:var(--glow);padding:3px 10px;letter-spacing:1px;}
+
+/* ═══ NEURO MONITOR ═══ */
+.patient-monitor{background:var(--panel2);border-bottom:1px solid var(--border2);padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;}
+.vital-card{background:var(--bg);border:1px solid var(--border2);padding:8px 10px;min-width:70px;flex:1;text-align:center;}
+.vital-label{font-family:var(--mono);font-size:7px;color:var(--muted);letter-spacing:1px;margin-bottom:3px;text-transform:uppercase;}
+.vital-val{font-family:var(--mono);font-size:16px;font-weight:bold;transition:color .5s,text-shadow .5s;}
+.vital-unit{font-family:var(--mono);font-size:7px;color:var(--muted);}
+.vital-val.danger{color:var(--glow2);text-shadow:0 0 12px var(--glow2);animation:pulse 1s infinite;}
+.vital-val.warning{color:var(--glow5);}
+.vital-val.ok{color:var(--glow3);}
+.vital-val.neutral{color:var(--text);}
+.vital-val.special{color:var(--glow6);}
+.stability-bar-wrap{width:100%;display:flex;align-items:center;gap:8px;margin-top:6px;}
+.stab-label{font-family:var(--mono);font-size:9px;color:var(--muted);white-space:nowrap;}
+.stab-track{flex:1;height:8px;background:var(--bg);border:1px solid var(--border2);overflow:hidden;}
+.stab-fill{height:100%;transition:width 1s ease,background .8s ease;background:var(--glow3);}
+.stab-pct{font-family:var(--mono);font-size:10px;white-space:nowrap;transition:color .5s;}
+
+/* EEG line */
+.eeg-line{display:block;width:100%;overflow:hidden;height:28px;margin:6px 0;}
+svg.eeg path{animation:eegAnim 2.5s linear infinite;}
+@keyframes eegAnim{from{stroke-dashoffset:900}to{stroke-dashoffset:0}}
+
+/* ═══ TABS ═══ */
+.tab-bar{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:12px 16px;background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--glow);border-bottom-color:var(--glow);}
+.tab-btn .tab-badge{display:inline-block;background:var(--glow2);color:#fff;font-size:8px;padding:1px 5px;margin-left:4px;border-radius:8px;}
+.tab-panel{display:none;flex:1;overflow-y:auto;padding:16px;}
+.tab-panel.active{display:block;}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--panel);border:1px solid var(--border);margin-bottom:12px;overflow:hidden;}
+.card-header{background:rgba(255,176,0,.065);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:8px;}
+.card-header-label{font-family:var(--mono);font-size:9px;color:var(--glow);letter-spacing:2px;text-transform:uppercase;}
+.card-body{padding:14px;}
+.info-block{margin-bottom:14px;}
+.info-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:4px;}
+.info-val{font-size:15px;color:var(--text);line-height:1.5;}
+.info-val .red{color:var(--glow2);font-weight:bold;}
+.info-val .purple{color:var(--glow6);}
+.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.data-cell{background:var(--bg);border:1px solid var(--border2);padding:8px 10px;}
+.dc-label{font-family:var(--mono);font-size:8px;color:var(--muted);margin-bottom:2px;}
+.dc-val{font-family:var(--mono);font-size:14px;font-weight:bold;color:var(--glow4);}
+.dc-val.alert{color:var(--glow2);}
+.dc-val.purple{color:var(--glow6);}
+.divider{border:none;border-top:1px solid var(--border2);margin:12px 0;}
+.sec-title{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:2px;color:var(--glow);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-title::before{content:'';display:block;width:16px;height:2px;background:var(--glow);}
+.phase-transition{background:var(--panel);border-left:4px solid var(--glow);padding:14px;margin-bottom:14px;font-family:var(--mono);font-size:11px;color:var(--glow);letter-spacing:1px;}
+
+/* Neuron diagram inline */
+.neuron-diagram{background:rgba(255,176,0,.035);border:1px solid var(--border);padding:14px;margin-bottom:14px;position:relative;overflow:hidden;}
+.neuron-diagram-title{font-family:var(--mono);font-size:9px;color:var(--glow);letter-spacing:2px;margin-bottom:10px;}
+.neuron-svg-wrap{display:flex;justify-content:center;margin-bottom:6px;}
+
+/* ═══ ALERT SYSTEM ═══ */
+.alert-inbox{display:flex;flex-direction:column;gap:10px;}
+.alert-item{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--muted2);padding:12px 14px;cursor:pointer;transition:all .2s;position:relative;opacity:0;transform:translateY(8px);animation:alertAppear .4s ease forwards;}
+@keyframes alertAppear{to{opacity:1;transform:none;}}
+.alert-item.unread{border-left-color:var(--glow2);}
+.alert-item.unread.nurse-blink{animation:alertAppear .4s ease forwards,nurseBlink 2s ease 1s 3;}
+@keyframes nurseBlink{0%,100%{border-left-color:var(--glow2)}50%{border-left-color:var(--glow4)}}
+.alert-item:hover,.alert-item:active{border-color:var(--glow);}
+.alert-item.resolved{border-left-color:var(--glow3);opacity:.6;}
+.alert-type{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.alert-type.critical{color:var(--glow2);}
+.alert-type.lab{color:var(--glow);}
+.alert-type.nurse{color:var(--glow4);}
+.alert-type.neuro{color:var(--glow6);}
+.alert-title{font-family:var(--display);font-weight:700;font-size:14px;color:#fff;}
+.alert-preview{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.alert-badge{position:absolute;top:10px;right:12px;font-family:var(--mono);font-size:8px;padding:2px 8px;font-weight:bold;letter-spacing:1px;}
+.badge-new{background:var(--glow2);color:#fff;}
+.badge-ok{background:var(--glow3);color:var(--bg);}
+.all-done-msg{font-family:var(--mono);font-size:11px;color:var(--glow3);text-align:center;padding:20px;display:none;}
+
+/* ═══ EMERGENT POPUP ═══ */
+.alert-popup{position:fixed;top:80px;right:0;z-index:400;max-width:300px;width:90%;background:var(--bg2);border:2px solid var(--glow2);border-right:none;padding:14px 16px;pointer-events:all;transform:translateX(110%);transition:transform .4s cubic-bezier(.32,.72,0,1);}
+.alert-popup.show{transform:translateX(0);}
+.alert-popup.nurse{border-color:var(--glow4);}
+.alert-popup.lab{border-color:var(--glow);}
+.alert-popup.neuro{border-color:var(--glow6);}
+.alert-popup-type{font-family:var(--mono);font-size:8px;letter-spacing:2px;margin-bottom:4px;color:var(--glow2);}
+.alert-popup.nurse .alert-popup-type{color:var(--glow4);}
+.alert-popup.lab .alert-popup-type{color:var(--glow);}
+.alert-popup.neuro .alert-popup-type{color:var(--glow6);}
+.alert-popup-title{font-family:var(--display);font-weight:700;font-size:13px;color:#fff;line-height:1.2;margin-bottom:2px;}
+.alert-popup-sub{font-size:11px;color:var(--muted);line-height:1.4;}
+.alert-popup-go{margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--glow);letter-spacing:1px;cursor:pointer;background:none;border:1px solid rgba(255,176,0,.32);padding:4px 10px;display:inline-block;}
+@keyframes popupBlink{0%,100%{box-shadow:0 0 0 0 rgba(255,75,110,0)}50%{box-shadow:0 0 18px 4px rgba(255,75,110,.35)}}
+.alert-popup.show.critical{animation:popupBlink 1.5s ease 2;}
+
+/* ═══ MODAL ═══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:500;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal-sheet{background:var(--bg2);border:1px solid var(--border);border-bottom:none;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;border-radius:12px 12px 0 0;animation:sheetUp .35s cubic-bezier(.32,.72,0,1);}
+@keyframes sheetUp{from{transform:translateY(100%)}}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
+.modal-inner{padding:16px 20px 32px;}
+.modal-type{font-family:var(--mono);font-size:9px;letter-spacing:3px;padding:4px 10px;display:inline-block;margin-bottom:12px;}
+.mtype-critical{background:rgba(255,75,110,.15);color:var(--glow2);border:1px solid rgba(255,75,110,.3);}
+.mtype-nurse{background:rgba(255,204,0,.1);color:var(--glow4);border:1px solid rgba(255,204,0,.25);}
+.mtype-lab{background:rgba(255,176,0,.11);color:var(--glow);border:1px solid rgba(255,176,0,.28);}
+.mtype-neuro{background:rgba(204,136,255,.1);color:var(--glow6);border:1px solid rgba(204,136,255,.25);}
+.mtype-instakill{background:rgba(255,0,0,.25);color:#ff4040;border:2px solid #ff4040;animation:pulse .7s infinite;}
+.modal-title{font-family:var(--display);font-size:20px;font-weight:900;color:#fff;margin-bottom:8px;line-height:1.2;}
+.modal-narrative{font-size:14px;color:#ffd8a8;line-height:1.7;margin-bottom:16px;padding:12px;background:rgba(255,176,0,.035);border-left:3px solid var(--border);}
+.modal-narrative strong{color:var(--glow);}
+.modal-narrative .red{color:var(--glow2);}
+.modal-narrative .gold{color:var(--glow4);}
+.modal-narrative .purple{color:var(--glow6);}
+.modal-timer{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--glow4);margin-bottom:12px;}
+.modal-timer-val{font-size:20px;font-weight:bold;transition:color .3s;}
+.modal-timer-val.low{color:var(--glow2)!important;animation:pulse 1s infinite;}
+.data-highlight{background:var(--bg);border:1px solid var(--border);padding:12px;margin-bottom:14px;font-family:var(--mono);font-size:13px;}
+.dh-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border2);}
+.dh-row:last-child{border-bottom:none;}
+.dh-key{color:var(--muted);font-size:10px;}
+.dh-val{color:var(--glow4);font-weight:bold;}
+.dh-val.red{color:var(--glow2);}
+.dh-val.purple{color:var(--glow6);}
+.question-prompt{font-family:var(--display);font-weight:700;font-size:15px;color:#fff;margin-bottom:14px;line-height:1.4;}
+.options-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.opt-btn{background:var(--panel);border:1px solid var(--border);color:var(--text);font-family:var(--body);font-size:14px;padding:14px 16px;cursor:pointer;text-align:left;transition:all .2s;border-radius:4px;line-height:1.4;display:flex;gap:10px;align-items:flex-start;}
+.opt-btn:hover,.opt-btn:active{border-color:var(--glow);background:rgba(255,176,0,.065);}
+.opt-btn .opt-letter{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:18px;margin-top:2px;}
+.opt-btn.correct{border-color:var(--glow3);background:rgba(57,255,20,.08);color:#fff;}
+.opt-btn.incorrect{border-color:var(--glow2);background:rgba(255,75,110,.08);}
+.opt-btn:disabled{cursor:default;}
+.feedback-box{padding:14px;margin-bottom:14px;border-left:4px solid transparent;display:none;}
+.feedback-box.show{display:block;}
+.feedback-box.correct{border-color:var(--glow3);background:rgba(57,255,20,.07);}
+.feedback-box.incorrect{border-color:var(--glow2);background:rgba(255,75,110,.07);}
+.feedback-title{font-family:var(--display);font-weight:700;font-size:14px;margin-bottom:6px;}
+.feedback-box.correct .feedback-title{color:var(--glow3);}
+.feedback-box.incorrect .feedback-title{color:var(--glow2);}
+.feedback-text{font-size:13px;color:#ffd8a8;line-height:1.6;}
+.feedback-text strong{color:var(--text);}
+.text-area-q{background:rgba(255,176,0,.045);border:1px solid var(--border);color:var(--text);font-family:var(--body);font-size:14px;padding:12px;width:100%;min-height:100px;resize:vertical;outline:none;margin-bottom:10px;line-height:1.5;}
+.text-area-q:focus{border-color:var(--glow);}
+.btn-submit{background:transparent;border:2px solid var(--glow);color:var(--glow);font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:2px;padding:12px 24px;cursor:pointer;text-transform:uppercase;transition:all .25s;width:100%;}
+.btn-submit:hover,.btn-submit:active{background:var(--glow);color:var(--bg);}
+.btn-close-modal{background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:10px;cursor:pointer;width:100%;text-transform:uppercase;margin-top:8px;transition:all .2s;}
+.btn-close-modal:hover{border-color:var(--muted);color:var(--text);}
+
+/* ═══ INVESTIGATION ═══ */
+.invest-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.invest-btn{background:var(--panel);border:1px solid var(--border);padding:16px 10px;cursor:pointer;text-align:center;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:90px;justify-content:center;}
+.invest-btn:hover,.invest-btn:active{border-color:var(--glow3);}
+.invest-btn.unlocked{border-color:var(--glow3);background:rgba(57,255,20,.05);}
+.invest-btn.locked-inv{opacity:.5;cursor:not-allowed;}
+.invest-icon{font-size:22px;}
+.invest-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.invest-btn.unlocked .invest-label{color:var(--glow3);}
+.invest-status{font-size:9px;color:var(--muted2);}
+.invest-btn.unlocked .invest-status{color:var(--glow3);}
+
+/* ═══ HELPS ═══ */
+.help-card{background:var(--panel);border:1px solid var(--border);padding:14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;}
+.help-icon{font-size:24px;flex-shrink:0;}
+.help-name{font-family:var(--display);font-weight:700;font-size:14px;color:var(--glow4);}
+.help-desc{font-size:12px;color:var(--muted);margin-top:2px;}
+.help-uses{font-family:var(--mono);font-size:10px;color:var(--glow2);margin-top:4px;}
+.btn-use-help{background:transparent;border:1px solid var(--glow4);color:var(--glow4);font-family:var(--mono);font-size:10px;letter-spacing:1px;padding:6px 14px;cursor:pointer;margin-top:8px;transition:all .2s;text-transform:uppercase;}
+.btn-use-help:hover{background:rgba(255,204,0,.1);}
+.btn-use-help:disabled{opacity:.3;cursor:not-allowed;}
+
+/* ═══ INFORME ═══ */
+#s-informe{padding:0;background:var(--bg);}
+.informe-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:20px 20px 16px;}
+.inf-badge{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:6px;}
+.inf-title{font-family:var(--display);font-size:22px;font-weight:900;color:#fff;}
+.inf-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.informe-body{padding:16px;}
+.inf-section{background:var(--panel);border:1px solid var(--border);margin-bottom:14px;overflow:hidden;}
+.inf-section-head{background:rgba(255,176,0,.075);border-bottom:1px solid var(--border);padding:10px 14px;}
+.inf-sec-num{font-family:var(--mono);font-size:9px;color:var(--glow);letter-spacing:2px;}
+.inf-sec-title{font-family:var(--display);font-weight:700;font-size:15px;color:#fff;margin-top:2px;}
+.inf-sec-body{padding:14px;}
+.inf-question{font-size:13px;color:#ffd8a8;line-height:1.6;margin-bottom:8px;}
+.inf-question strong{color:var(--text);}
+.inf-textarea{background:rgba(255,176,0,.035);border:1px solid var(--border);color:var(--text);font-family:var(--body);font-size:14px;padding:12px;width:100%;min-height:90px;resize:vertical;outline:none;margin-bottom:4px;line-height:1.5;border-radius:0;}
+.inf-textarea:focus{border-color:var(--glow);}
+.inf-hint{font-family:var(--mono);font-size:9px;color:var(--muted2);letter-spacing:1px;margin-bottom:12px;}
+.btn-submit-informe{display:block;width:100%;background:transparent;border:2px solid var(--glow3);color:var(--glow3);font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:3px;padding:18px;cursor:pointer;text-transform:uppercase;transition:all .3s;margin-top:20px;}
+.btn-submit-informe:hover{background:var(--glow3);color:var(--bg);}
+.btn-submit-informe:disabled{background:rgba(255,255,255,.03);border-color:#406354;color:#7ea08d;cursor:not-allowed;box-shadow:none;}
+.btn-submit-informe:disabled:hover{background:rgba(255,255,255,.03);color:#7ea08d;}
+.monitor-action-wrap{width:100%;margin-top:12px;padding-top:8px;border-top:1px solid var(--border2);}
+.monitor-action-wrap .btn-submit-informe{margin-top:0;padding:14px 16px;font-size:13px;letter-spacing:2px;}
+.monitor-action-help{margin-top:8px;font-size:11px;line-height:1.5;color:var(--muted);font-family:var(--body);}
+.monitor-action-help.ready{color:var(--glow3);}
+.informe-btn-fixed{display:none !important;position:fixed;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(transparent,var(--bg) 50%);z-index:150;}
+
+/* ═══ FINAL ═══ */
+#s-final{align-items:center;justify-content:center;text-align:center;padding:32px 20px;background:radial-gradient(ellipse at 50% 40%,rgba(57,255,20,.1),transparent 60%),var(--bg);}
+.final-icon{font-size:72px;margin-bottom:20px;animation:bounceIn .8s cubic-bezier(.36,.07,.19,.97);}
+@keyframes bounceIn{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.final-title{font-family:var(--display);font-size:32px;font-weight:900;color:var(--glow3);text-shadow:0 0 30px var(--glow3);margin-bottom:4px;}
+.final-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:3px;margin-bottom:28px;}
+.final-message{background:var(--panel);border:1px solid var(--glow3);padding:20px;text-align:left;margin-bottom:28px;box-shadow:0 0 30px rgba(57,255,20,.1);}
+.final-message::before{content:'> MENSAJE DE LA DRA. REYES — Hospital Lumina · Unidad Endocrina';display:block;font-family:var(--mono);font-size:9px;color:var(--glow3);letter-spacing:2px;margin-bottom:12px;}
+.final-message p{font-family:var(--mono);font-size:12px;color:#fff1cf;line-height:1.8;}
+.final-stats{display:flex;justify-content:center;gap:28px;margin-bottom:28px;flex-wrap:wrap;}
+.fstat{text-align:center;}
+.fstat-val{font-family:var(--mono);font-size:28px;font-weight:bold;color:var(--glow);display:block;}
+.fstat-label{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:2px;}
+.btn-restart{display:block;max-width:320px;margin:0 auto;background:transparent;border:2px solid var(--glow);color:var(--glow);font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:3px;padding:16px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
+.btn-restart:hover{background:var(--glow);color:var(--bg);}
+
+/* ═══ DEATH ═══ */
+#s-death{align-items:center;justify-content:center;text-align:center;padding:32px 20px;position:relative;background:radial-gradient(ellipse at 50% 40%,rgba(255,75,110,.18),transparent 60%),var(--bg);}
+.death-bg-flash{position:absolute;inset:0;background:rgba(255,0,0,.15);animation:deathFlash 2s ease-out both;pointer-events:none;}
+@keyframes deathFlash{0%{opacity:1}60%{opacity:.4}100%{opacity:0}}
+.death-icon{font-size:80px;margin-bottom:16px;animation:deathAppear 1s ease .3s both;}
+@keyframes deathAppear{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+.death-title{font-family:var(--display);font-size:clamp(28px,8vw,52px);font-weight:900;color:var(--glow2);text-shadow:0 0 40px var(--glow2);margin-bottom:6px;animation:deathAppear 1s ease .6s both;}
+.death-sub{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:3px;margin-bottom:28px;animation:deathAppear 1s ease .9s both;}
+.death-cause{background:var(--panel);border:2px solid var(--glow2);padding:18px;margin-bottom:24px;box-shadow:0 0 40px rgba(255,75,110,.25);animation:deathAppear 1s ease 1.1s both;}
+.death-cause-label{font-family:var(--mono);font-size:9px;color:var(--glow2);letter-spacing:2px;margin-bottom:8px;}
+.death-cause-text{font-size:14px;color:#f0a0a0;line-height:1.7;}
+.death-stats{display:flex;justify-content:center;gap:28px;margin-bottom:24px;animation:deathAppear 1s ease 1.2s both;}
+.death-stat{text-align:center;}
+.death-stat-val{font-family:var(--mono);font-size:32px;color:var(--glow2);font-weight:bold;display:block;}
+.death-stat-label{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:2px;}
+.btn-death-restart{display:block;max-width:320px;margin:0 auto;background:var(--glow2);border:2px solid var(--glow2);color:var(--bg);font-family:var(--display);font-size:15px;font-weight:900;letter-spacing:3px;padding:18px;cursor:pointer;text-transform:uppercase;transition:all .25s;animation:deathAppear 1s ease 1.5s both;}
+.btn-death-restart:hover{background:transparent;color:var(--glow2);}
+
+/* ═══ SURPRISE ═══ */
+.surprise-overlay{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.9);align-items:center;justify-content:center;backdrop-filter:blur(6px);}
+.surprise-overlay.show{display:flex;}
+.surprise-banner{background:var(--bg2);border:2px solid var(--glow5);padding:20px 24px;max-width:400px;width:90%;text-align:center;box-shadow:0 0 60px rgba(255,136,0,.4);animation:sheetUp .3s ease;}
+.surprise-icon{font-size:40px;margin-bottom:10px;}
+.surprise-title{font-family:var(--display);font-size:18px;font-weight:900;color:var(--glow5);margin-bottom:6px;}
+.surprise-text{font-size:13px;color:#ffd8a8;line-height:1.6;margin-bottom:14px;}
+.btn-surprise-ok{background:var(--glow5);color:var(--bg);border:none;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:2px;padding:12px 28px;cursor:pointer;text-transform:uppercase;width:100%;}
+
+/* ═══ CELEBRATION ═══ */
+.celebrate-overlay{display:none;position:fixed;inset:0;z-index:650;background:rgba(0,0,0,.88);align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px;}
+.celebrate-overlay.show{display:flex;}
+.celebrate-card{background:linear-gradient(180deg,rgba(6,26,15,.98),rgba(3,16,10,.98));border:2px solid var(--glow3);padding:24px;max-width:460px;width:100%;text-align:center;box-shadow:0 0 70px rgba(57,255,20,.18), inset 0 0 24px rgba(57,255,20,.04);animation:sheetUp .32s ease;}
+.celebrate-icon{font-size:52px;margin-bottom:10px;filter:drop-shadow(0 0 12px rgba(57,255,20,.35));}
+.celebrate-kicker{font-family:var(--mono);font-size:10px;color:var(--glow3);letter-spacing:3px;margin-bottom:8px;}
+.celebrate-title{font-family:var(--display);font-size:24px;font-weight:900;color:#fff;margin-bottom:10px;text-transform:uppercase;line-height:1.15;}
+.celebrate-text{font-size:14px;color:#baf0ca;line-height:1.75;margin-bottom:18px;}
+.celebrate-text strong{color:var(--glow3);}
+.celebrate-actions{display:grid;gap:10px;}
+.celebrate-btn{background:var(--glow3);color:var(--bg);border:2px solid var(--glow3);font-family:var(--display);font-weight:900;font-size:14px;letter-spacing:2px;padding:14px 18px;cursor:pointer;text-transform:uppercase;transition:all .25s;width:100%;}
+.celebrate-btn:hover{background:transparent;color:var(--glow3);}
+.celebrate-secondary{background:transparent;color:var(--muted);border:1px solid var(--border);font-family:var(--mono);font-size:10px;letter-spacing:2px;padding:12px 16px;cursor:pointer;text-transform:uppercase;transition:all .25s;width:100%;}
+.celebrate-secondary:hover{border-color:var(--glow);color:var(--glow);}
+
+/* ═══ WRONG FLASH ═══ */
+.wrong-flash{position:fixed;inset:0;background:rgba(255,0,0,.35);z-index:700;pointer-events:none;animation:wrongFlash .7s ease;display:none;}
+@keyframes wrongFlash{0%{opacity:1}100%{opacity:0}}
+
+
+.glossary-term{border-bottom:1px dotted var(--glow4);color:#fff3c4;cursor:pointer;font-weight:700;white-space:normal;}
+.glossary-term::after{content:' ⓘ';font-family:var(--mono);font-size:9px;color:var(--glow4);}
+.glossary-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:900;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px);}
+.glossary-backdrop.show{display:flex;}
+.glossary-card{background:var(--bg2);border:2px solid var(--glow);box-shadow:0 0 50px rgba(255,176,0,.22);max-width:440px;width:100%;padding:18px;text-align:left;}
+.glossary-kicker{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--glow);margin-bottom:8px;}
+.glossary-title{font-family:var(--display);font-size:22px;font-weight:900;color:#fff;margin-bottom:8px;}
+.glossary-body{font-size:14px;color:#ffd8a8;line-height:1.7;margin-bottom:12px;}
+.glossary-example{font-size:12px;color:var(--muted);line-height:1.6;border-left:3px solid var(--glow4);padding-left:10px;margin-bottom:14px;}
+.glossary-close{width:100%;background:transparent;border:1px solid var(--glow);color:var(--glow);font-family:var(--mono);font-size:11px;padding:10px;cursor:pointer;letter-spacing:2px;}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--bg2);border:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--text);padding:10px 18px;z-index:800;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center;}
+.toast.visible{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══ MISC ═══ */
+.tag{display:inline-block;font-family:var(--mono);font-size:9px;padding:2px 8px;letter-spacing:1px;margin:2px;}
+.tag-red{background:rgba(255,75,110,.15);color:var(--glow2);border:1px solid rgba(255,75,110,.3);}
+.tag-green{background:rgba(255,176,0,.11);color:var(--glow);border:1px solid rgba(255,176,0,.28);}
+.tag-purple{background:rgba(204,136,255,.1);color:var(--glow6);border:1px solid rgba(204,136,255,.25);}
+.tag-gold{background:rgba(255,204,0,.1);color:var(--glow4);border:1px solid rgba(255,204,0,.25);}
+@media(min-width:480px){.invest-grid{grid-template-columns:repeat(3,1fr)}.data-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ─── PORTADA ─── -->
+<div id="s-cover" class="screen active">
+  <div class="grid-bg"></div>
+  <!-- Floating metabolic decorations -->
+  <div style="position:absolute;inset:0;pointer-events:none;overflow:hidden">
+    <div class="neuron-dot" style="top:15%;left:10%;animation-delay:.2s"></div>
+    <div class="neuron-dot" style="top:30%;left:85%;animation-delay:.8s"></div>
+    <div class="neuron-dot" style="top:70%;left:20%;animation-delay:1.2s"></div>
+    <div class="neuron-dot" style="top:80%;left:75%;animation-delay:.5s"></div>
+    <div class="neuron-dot" style="top:50%;left:5%;animation-delay:1.7s"></div>
+    <div class="synapse-line" style="top:25%;left:12%;width:80px;transform:rotate(30deg)"></div>
+    <div class="synapse-line" style="top:65%;left:70%;width:60px;transform:rotate(-20deg);animation-delay:1s"></div>
+    <div class="synapse-line" style="top:45%;left:40%;width:100px;animation-delay:1.5s"></div>
+  </div>
+  <div class="entry-wrap">
+    <div class="entry-badge">🟠 HOSPITAL LUMINA · UNIDAD ENDOCRINA</div>
+    <div class="entry-title">Caso <span class="accent">Valentina</span></div>
+    <div class="entry-sub">Valentina R., 16 años. Ingresa desde el colegio con sed intensa, vómitos, respiración profunda, piel seca, dolor abdominal y confusión. El equipo sospecha una crisis endocrino-metabólica severa.<br><br><strong style="color:var(--glow2)">⚠ ADVERTENCIA:</strong> Cada error clínico tiene consecuencias. Algunas decisiones son de alta criticidad: interpretar mal la glicemia, la deshidratación o la respiración puede ser fatal para Valentina.</div>
+    <!-- Endocrine illustration -->
+    <div class="hero-endocrine" aria-label="Ilustración del páncreas endocrino liberando hormonas hacia la sangre">
+      <div class="endocrine-orbit"></div>
+      <div class="pancreas-core"></div>
+      <div class="islet i1"></div><div class="islet i2"></div><div class="islet i3"></div>
+      <div class="glucose-node g1">Glu</div><div class="glucose-node g2">Glu</div><div class="glucose-node g3">Ins</div><div class="glucose-node g4">Gcg</div>
+      <div class="hormone-line" style="top:88px;left:62px;width:86px;transform:rotate(20deg)"></div>
+      <div class="hormone-line" style="top:118px;right:66px;width:92px;transform:rotate(-16deg);animation-delay:.7s"></div>
+      <div class="hormone-line" style="top:58px;left:118px;width:120px;animation-delay:1.1s"></div>
+      <div class="hero-label">PÁNCREAS ENDOCRINO · GLUCOSA · HOMEOSTASIS</div>
+    </div>
+    <button class="epic-btn" onclick="beginSequence()">▶ INICIAR GUARDIA ENDOCRINA</button>
+  </div>
+</div>
+
+<!-- ─── CARGA ─── -->
+<div id="s-loading" class="screen">
+  <div class="grid-bg"></div>
+  <div class="entry-wrap">
+    <div class="loading-shell">
+      <div class="loading-label">SINCRONIZANDO SISTEMAS ENDOCRINO-METABÓLICOS</div>
+      <div class="entry-title" style="font-size:32px;margin-bottom:4px">Unidad <span class="accent">Ámbar</span></div>
+      <div class="entry-sub" id="loading-status">Inicializando monitoreo metabólico.</div>
+      <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+      <div class="loading-steps" id="loading-steps">
+        <div class="loading-step">[ ] VALIDANDO CREDENCIAL DEL RESIDENTE</div>
+        <div class="loading-step">[ ] CARGANDO MONITOREO METABÓLICO — BOX 7</div>
+        <div class="loading-step">[ ] ENLAZANDO GLICEMIA Y RESPIRACIÓN COMPENSATORIA</div>
+        <div class="loading-step">[ ] ANALIZANDO MUESTRA SANGUÍNEA Y CETONAS</div>
+        <div class="loading-step">[ ] PROTOCOLO ÁMBAR DESPLEGADO — PRIORIDAD MÁXIMA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CHECK-IN ─── -->
+<div id="s-checkin" class="screen">
+  <div class="grid-bg"></div>
+  <div class="entry-wrap">
+    <div class="checkin-shell">
+      <div class="checkin-label">CONTROL DE ACCESO · UNIDAD ENDOCRINA</div>
+      <div class="entry-title" style="font-size:30px;margin-bottom:6px">Control de <span class="accent">Ingreso</span></div>
+      <div class="entry-sub">Valida tu identidad en el terminal de la Unidad Endocrina.</div>
+      <div class="scanner-box"><div class="scanner-line"></div><div class="frontis-mini"></div></div>
+      <input type="text" class="resident-input" id="residentNameEntry" placeholder="INGRESA TU NOMBRE" maxlength="24" autocomplete="off">
+      <button class="epic-btn" id="btnCheckin" disabled onclick="goToBriefing()">VALIDAR INGRESO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BRIEF ─── -->
+<div id="s-intro" class="screen">
+  <div class="grid-bg"></div>
+  <div class="entry-wrap">
+    <div class="brief-shell">
+      <div class="brief-label">🚨 ALERTA CRÍTICA · ENDOCRINOLOGÍA BOX 7</div>
+      <div class="entry-title" style="font-size:42px;margin-bottom:4px">Valentina <span class="accent">R.</span></div>
+      <div class="entry-sub">Adolescente de 16 años. Descompensación endocrino-metabólica severa. Ingresa con vómitos, deshidratación, respiración profunda y confusión progresiva.</div>
+      <div class="brief-vitals">
+        <div class="brief-vital"><strong>28</strong><span>resp/min · F.R.</span></div>
+        <div class="brief-vital"><strong>386</strong><span>mg/dL · Glicemia</span></div>
+        <div class="brief-vital"><strong>16</strong><span>años · EDAD</span></div>
+      </div>
+      <div class="loading-shell" style="padding:14px;margin-bottom:16px">
+        <div class="loading-label">⚠ REGLAS DE LA GUARDIA</div>
+        <div style="font-size:13px;color:#ffd8a8;line-height:1.8">
+          Cada decisión clínica afecta la estabilidad metabólica de Valentina. Los errores tienen consecuencias reales. Algunas preguntas son de alta criticidad: equivocarse en ellas puede ser <strong style="color:var(--glow2)">inmediatamente fatal</strong>.<br><br>
+          ✅ Cuando respondas todas las alertas obligatorias de la emergencia y Valentina siga con vida, podrás <strong style="color:var(--glow)">estabilizar a Valentina</strong>. Después aparecerá una <strong style="color:var(--glow3)">felicitación al residente</strong> y recién entonces se habilitará el <strong style="color:var(--glow4)">Informe del Residente</strong>. Las preguntas de escritura final son <strong style="color:var(--glow4)">opcionales dentro del HTML</strong> y puedes responderlas en tu cuaderno.<br><br>
+          💾 Tu progreso se guarda automáticamente.
+        </div>
+      </div>
+      <button class="epic-btn" onclick="launchCase()">▶ DESPLEGAR PROTOCOLO ÁMBAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── JUEGO ─── -->
+<div id="s-game" class="screen">
+  <div class="hud">
+    <div class="hud-title">🟠 H. LUMINA · ENDOCRINOLOGÍA</div>
+    <div class="hud-resident">DR/A. <span id="hud-name">—</span></div>
+    <div class="stress-display">
+      <span class="stress-label">ESTADO:</span>
+      <div class="stress-track"><div class="stress-fill" id="stress-fill" style="width:20%;background:var(--glow3)"></div></div>
+    </div>
+    <div class="hud-phase" id="hud-phase">FASE 1</div>
+  </div>
+  <div class="patient-monitor">
+    <div class="vital-card">
+      <div class="vital-label">F. RESPIRATORIA</div>
+      <div class="vital-val warning" id="v-fr">28</div>
+      <div class="vital-unit">resp/min</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">GLICEMIA</div>
+      <div class="vital-val danger" id="v-toxina">386</div>
+      <div class="vital-unit">mg/dL</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">CONCIENCIA</div>
+      <div class="vital-val warning" id="v-conciencia">4/10</div>
+      <div class="vital-unit">escala</div>
+    </div>
+    <div class="vital-card">
+      <div class="vital-label">CETONAS</div>
+      <div class="vital-val danger" id="v-sinapsis">+++</div>
+      <div class="vital-unit">estado</div>
+    </div>
+    <div class="stability-bar-wrap">
+      <div class="stab-label">ESTABILIDAD METABÓLICA</div>
+      <div class="stab-track"><div class="stab-fill" id="stab-fill" style="width:25%;background:#ff4b6e"></div></div>
+      <div class="stab-pct" id="stab-pct" style="color:#ff4b6e">25%</div>
+    </div>
+    <div class="monitor-action-wrap">
+      <button class="btn-submit-informe" id="btn-stabilize-case" onclick="goToFinal()" disabled>🔒 INFORME FINAL BLOQUEADO — RESPONDE TODAS LAS ALERTAS</button>
+      <div class="monitor-action-help" id="stabilize-helper">Debes responder todas las alertas obligatorias del caso. Puedes equivocarte hasta 2 veces; al tercer error, Valentina no sobrevive.</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('expediente',this)">📋 Expediente</button>
+    <button class="tab-btn" onclick="switchTab('alertas',this)">🚨 Alertas <span class="tab-badge" id="alert-badge" style="display:none">0</span></button>
+    <button class="tab-btn" onclick="switchTab('investigar',this)">🔍 Investigar</button>
+    <button class="tab-btn" onclick="switchTab('ayudas',this)">💡 Ayudas</button>
+  </div>
+  <div class="game-body">
+    <!-- EXPEDIENTE -->
+    <div class="tab-panel active" id="tab-expediente">
+      <div class="card">
+        <div class="card-header"><div class="card-header-label">📋 Ficha de Admisión — Valentina R.</div></div>
+        <div class="card-body">
+          <div class="data-grid">
+            <div class="data-cell"><div class="dc-label">PACIENTE</div><div class="dc-val" style="color:var(--text)">Valentina R.</div></div>
+            <div class="data-cell"><div class="dc-label">EDAD</div><div class="dc-val">16 años</div></div>
+            <div class="data-cell"><div class="dc-label">F.R. INGRESO</div><div class="dc-val alert">8 resp/min</div></div>
+            <div class="data-cell"><div class="dc-label">CONCIENCIA</div><div class="dc-val alert">Confusa · responde lento</div></div>
+          </div>
+          <hr class="divider">
+          <div class="info-block">
+            <div class="info-label">MOTIVO DE CONSULTA</div>
+            <div class="info-val">Adolescente de 16 años traída desde el colegio tras varios días de sed intensa, cansancio extremo, baja de peso y micción frecuente. Durante la jornada presentó <span class="red">vómitos, dolor abdominal, respiración profunda y confusión</span>. No hay trauma ni infección evidente.</div>
+          </div>
+          <div class="info-block">
+            <div class="info-label">ESTADO AL INGRESO</div>
+            <div class="info-val">Consciente pero desorientada, responde lento. <span class="red">Frecuencia respiratoria 28/min, respiración profunda y sostenida.</span> Piel seca, mucosas secas, dolor abdominal, náuseas y debilidad marcada. El box huele levemente afrutado.</div>
+          </div>
+          <div class="info-block">
+            <div class="info-label">ANTECEDENTES</div>
+            <div class="info-val">Sin diagnóstico endocrino previo registrado. La profesora informa que Valentina pidió agua varias veces durante la semana y salió muchas veces al baño. <span class="purple">Muestra sanguínea enviada a laboratorio metabólico.</span></div>
+          </div>
+          <hr class="divider">
+          <!-- Pulso metabólico decorativo -->
+          <svg class="eeg-line" viewBox="0 0 360 28" fill="none">
+            <path d="M0,14 L20,14 L28,14 L32,2 L36,24 L40,8 L44,14 L52,14 L56,10 L60,14 L80,14 L100,14 L104,2 L108,24 L112,8 L116,14 L124,14 L128,14 L140,14 L144,2 L148,24 L152,8 L156,14 L164,14 L180,14 L184,2 L188,24 L192,8 L196,14 L210,14 L220,6 L224,20 L228,10 L232,14 L260,14 L264,2 L268,24 L272,8 L276,14 L290,14 L300,14 L304,2 L308,24 L312,8 L316,14 L340,14 L360,14"
+              stroke="#ffb000" stroke-width="1.2" stroke-dasharray="900" stroke-dashoffset="900" style="animation:eegAnim 2.5s linear infinite"/>
+          </svg>
+          <div class="phase-transition" id="phase-notice">🟡 <strong>FASE 1 — TRIAGE ENDOCRINO:</strong> Revisa el expediente, interpreta la glicemia y no confundas la respiración profunda con ansiedad. Cada decisión importa.</div>
+          <div class="info-block" id="tox-section" style="display:none">
+            <div class="info-label">ANÁLISIS METABÓLICO PARCIAL</div>
+            <div class="data-grid" id="tox-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ALERTAS -->
+    <div class="tab-panel" id="tab-alertas">
+      <div class="alert-inbox" id="alert-inbox"></div>
+      <div class="all-done-msg" id="all-done-msg">✅ Todas las alertas obligatorias ya fueron respondidas</div>
+      <div style="height:80px"></div>
+    </div>
+    <!-- INVESTIGAR -->
+    <div class="tab-panel" id="tab-investigar">
+      <div class="sec-title">Exploración del caso endocrino</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Puedes interrogar a la profesora, revisar laboratorio o consultar antecedentes. Cada área revela datos clave sobre hormonas, homeostasis y órganos diana.</p>
+      <div class="invest-grid" id="invest-grid"></div>
+      <div style="height:20px"></div>
+    </div>
+    <!-- AYUDAS -->
+    <div class="tab-panel" id="tab-ayudas">
+      <div class="sec-title">Recursos disponibles</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6">Tienes 3 ayudas para toda la guardia. Úsalas con criterio.</p>
+      <div class="help-section" id="help-section"></div>
+    </div>
+  </div>
+  <div class="informe-btn-fixed" id="informe-btn-wrap">
+    <button class="btn-submit-informe" onclick="goToFinal()">✅ ESTABILIZAR A VALENTINA Y CERRAR EMERGENCIA</button>
+  </div>
+</div>
+
+<!-- ─── INFORME ─── -->
+<div id="s-informe" class="screen">
+  <div class="informe-header">
+    <div class="inf-badge">🟠 HOSPITAL LUMINA · UNIDAD ENDOCRINA · REGISTRO PEDAGÓGICO</div>
+    <div class="inf-title">Informe del Residente — Caso Valentina</div>
+    <div class="inf-sub">Paciente: Valentina R. · 16 años · Dr/a. <span id="inf-resident">—</span></div>
+  </div>
+  
+<div class="informe-body">
+    <div class="inf-section">
+      <div class="inf-section-head"><div class="inf-sec-num">INDICACIÓN GENERAL</div><div class="inf-sec-title">Rescata este informe y desarrolla las respuestas en tu cuaderno</div></div>
+      <div class="inf-sec-body">
+        <p class="inf-question">Ya lograste estabilizar a Valentina. Ahora debes <strong>rescatar el informe del residente</strong> y responder estas preguntas en tu cuaderno con lenguaje claro, científico y completo. Los espacios de texto dentro del HTML quedan como apoyo opcional.</p>
+        <div class="inf-hint">// OBJETIVO: explicar la crisis endocrina, la regulación hormonal, la homeostasis y cómo comunicarlo a la familia</div>
+      </div>
+    </div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 01</div><div class="inf-sec-title">¿Qué le ocurrió a Valentina?</div></div><div class="inf-sec-body"><p class="inf-question">Describe con tus palabras qué tipo de desregulación presentó Valentina. <strong>¿Por qué fue una urgencia endocrino-metabólica y no solo un dolor abdominal o ansiedad?</strong></p><textarea class="inf-textarea" placeholder="Explica el cuadro general..."></textarea><div class="inf-hint">// INCLUYE: glicemia · deshidratación · respiración · conciencia</div></div></div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 02</div><div class="inf-sec-title">Sistema endocrino vs sistema nervioso</div></div><div class="inf-sec-body"><p class="inf-question">Explica dos diferencias entre el sistema endocrino y el sistema nervioso, considerando <strong>tipo de señal, velocidad, duración y órganos diana</strong>.</p><textarea class="inf-textarea"></textarea><div class="inf-hint">// COMPARA: hormonas por sangre · impulsos nerviosos · respuesta lenta/sostenida · respuesta rápida</div></div></div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 03</div><div class="inf-sec-title">Páncreas, insulina y glucagón</div></div><div class="inf-sec-body"><p class="inf-question">Explica la función del páncreas endocrino, la insulina y el glucagón en la regulación de la glicemia.</p><textarea class="inf-textarea"></textarea><div class="inf-hint">// CONECTA: insulina baja glicemia · glucagón eleva glicemia · hígado, músculo y tejido adiposo</div></div></div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 04</div><div class="inf-sec-title">Homeostasis y retroalimentación negativa</div></div><div class="inf-sec-body"><p class="inf-question">Explica cómo debería funcionar la retroalimentación negativa para mantener la glicemia estable y qué falló en el caso de Valentina.</p><textarea class="inf-textarea"></textarea><div class="inf-hint">// EJEMPLO: sube glucosa → respuesta que intenta bajarla → vuelve al rango</div></div></div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 05</div><div class="inf-sec-title">Órganos diana y efecto sistémico</div></div><div class="inf-sec-body"><p class="inf-question">¿Por qué una alteración hormonal puede afectar muchos órganos al mismo tiempo? Usa la idea de <strong>hormona, receptor y órgano diana</strong>.</p><textarea class="inf-textarea"></textarea><div class="inf-hint">// INCLUYE: sangre · receptores · hígado · músculo · tejido adiposo · riñón</div></div></div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 06</div><div class="inf-sec-title">Explícaselo a la familia</div></div><div class="inf-sec-body"><p class="inf-question">Imagina que debes explicarle a la familia de Valentina qué ocurrió. Escríbelo con palabras simples, evitando tecnicismos innecesarios, pero sin perder precisión científica.</p><textarea class="inf-textarea"></textarea><div class="inf-hint">// IDEA CLAVE: mucha glucosa en sangre no significa que las células estén usando bien esa energía</div></div></div>
+    <div class="inf-section"><div class="inf-section-head"><div class="inf-sec-num">SECCIÓN 07</div><div class="inf-sec-title">Reflexión clínica y prevención</div></div><div class="inf-sec-body"><p class="inf-question">¿Qué señales de alerta te parecieron más graves? Explica qué aprendiste sobre prevención, toma de decisiones y cuidado del sistema endocrino.</p><textarea class="inf-textarea"></textarea><div class="inf-hint">// RELACIONA: sed persistente · orina frecuente · baja de peso · vómitos · confusión · respiración profunda</div></div></div>
+    <button class="btn-submit-informe" onclick="goToFinal()">↩ VOLVER AL CIERRE DEL CASO</button>
+    <div style="height:40px"></div>
+  </div>
+
+<!-- ─── FINAL ─── -->
+<div id="s-final" class="screen">
+  <div class="final-icon">🟠</div>
+  <div class="final-title">VALENTINA ESTABILIZADA</div>
+  <div class="final-sub">HOSPITAL LUMINA · UNIDAD ENDOCRINA · CASO CERRADO</div>
+  <div class="final-message"><p>Lo lograste. Valentina respira con menos esfuerzo, responde mejor y su equipo ya comprende la raíz de la crisis: una falla en la regulación hormonal de la glucosa que rompió la homeostasis. No se trataba solo de “azúcar alta”, sino de células sin acceso adecuado a energía, deshidratación y compensaciones que podían colapsar. — Dra. Camila Reyes, Jefa de Endocrinología.</p></div>
+  <div class="final-stats">
+    <div class="fstat"><span class="fstat-val" id="fs-stability">—</span><span class="fstat-label">ESTABILIDAD FINAL</span></div>
+    <div class="fstat"><span class="fstat-val" id="fs-alerts">—</span><span class="fstat-label">ALERTAS RESUELTAS</span></div>
+    <div class="fstat"><span class="fstat-val" id="fs-errors">—</span><span class="fstat-label">ERRORES COMETIDOS</span></div>
+  </div>
+  <div style="display:grid;gap:12px;max-width:420px;width:100%;margin:0 auto">
+    <button class="btn-restart" id="btn-open-informe" onclick="goToInforme()" style="display:none;margin:0 auto;max-width:none;width:100%">📘 INGRESAR AL INFORME FINAL DEL CUADERNO</button>
+    <button class="btn-restart" onclick="restartGame()" style="margin:0 auto;max-width:none;width:100%">↺ NUEVA GUARDIA</button>
+  </div>
+</div>
+
+<!-- ─── MUERTE ─── -->
+<div id="s-death" class="screen">
+  <div class="death-bg-flash"></div>
+  <div style="position:relative;z-index:2;max-width:480px;width:100%">
+    <div class="death-icon">💀</div>
+    <div class="death-title">VALENTINA NO SOBREVIVIÓ</div>
+    <div class="death-sub">HOSPITAL LUMINA · CASO FALLIDO · CÓDIGO NEGRO</div>
+    <div class="death-cause">
+      <div class="death-cause-label">📋 CAUSA DE DECESO</div>
+      <div class="death-cause-text" id="death-cause-text">Las decisiones clínicas incorrectas permitieron que la crisis metabólica avanzara sin control. La deshidratación, la acidosis y la alteración energética comprometieron su estado de conciencia y respiración.</div>
+    </div>
+    <div class="death-stats">
+      <div class="death-stat"><span class="death-stat-val" id="death-alerts">—</span><span class="death-stat-label">ALERTAS RESUELTAS</span></div>
+      <div class="death-stat"><span class="death-stat-val" id="death-errors">—</span><span class="death-stat-label">ERRORES COMETIDOS</span></div>
+    </div>
+    <button class="btn-death-restart" onclick="restartGame()">↺ REINICIAR GUARDIA</button>
+    <p style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:16px;letter-spacing:1px">La homeostasis no espera. Vuelve a intentarlo.</p>
+  </div>
+</div>
+
+<!-- ─── OVERLAYS ─── -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-sheet"><div class="modal-handle"></div><div class="modal-inner" id="modal-inner"></div></div>
+</div>
+<div class="surprise-overlay" id="surprise-overlay">
+  <div class="surprise-banner">
+    <div class="surprise-icon" id="surp-icon">⚠️</div>
+    <div class="surprise-title" id="surp-title">EVENTO INESPERADO</div>
+    <div class="surprise-text" id="surp-text">—</div>
+    <button class="btn-surprise-ok" onclick="closeSurprise()">ENTENDIDO — ACTUAR</button>
+  </div>
+</div>
+<div class="celebrate-overlay" id="celebrate-overlay">
+  <div class="celebrate-card">
+    <div class="celebrate-icon">🏥</div>
+    <div class="celebrate-kicker">GUARDIA COMPLETADA</div>
+    <div class="celebrate-title">Excelente trabajo, residente</div>
+    <div class="celebrate-text" id="celebrate-text">Has respondido todas las alertas clínicas obligatorias, lograste estabilizar a Valentina y cerraste la emergencia. Ahora corresponde rescatar el informe final y desarrollar las preguntas en tu cuaderno.</div>
+    <div class="celebrate-actions">
+      <button class="celebrate-btn" onclick="proceedToInforme()">IR AL INFORME FINAL DEL CUADERNO</button>
+      <button class="celebrate-secondary" onclick="closeCelebrateStayFinal()">QUEDARME EN EL CIERRE DEL CASO</button>
+    </div>
+  </div>
+</div>
+<div class="alert-popup" id="alert-popup">
+  <div class="alert-popup-type" id="popup-type">ENDOCRINOLOGÍA</div>
+  <div class="alert-popup-title" id="popup-title">—</div>
+  <div class="alert-popup-sub" id="popup-sub">—</div>
+  <button class="alert-popup-go" onclick="goToAlerts()">VER ALERTAS →</button>
+</div>
+<div class="wrong-flash" id="wrong-flash"></div>
+<div class="toast" id="toast"></div>
+
+<div class="glossary-backdrop" id="glossary-backdrop" onclick="closeGlossaryOutside(event)">
+  <div class="glossary-card">
+    <div class="glossary-kicker">GLOSARIO ENDOCRINO</div>
+    <div class="glossary-title" id="glossary-title">Concepto</div>
+    <div class="glossary-body" id="glossary-body">—</div>
+    <div class="glossary-example" id="glossary-example"></div>
+    <button class="glossary-close" onclick="closeGlossary()">CERRAR</button>
+  </div>
+</div>
+
+
+<script>
+
+const GLOSSARY=[
+  {id:'sistema-endocrino',terms:['sistema endocrino','endocrino','endocrina'],title:'Sistema endocrino',body:'Sistema de glándulas que libera hormonas a la sangre para regular funciones como metabolismo, crecimiento, estrés, reproducción y equilibrio interno.',example:'En Valentina, el problema central es endocrino-metabólico porque involucra hormonas que regulan la glicemia.'},
+  {id:'hormonas',terms:['hormonas','hormona','hormonal'],title:'Hormonas',body:'Mensajeros químicos liberados por glándulas endocrinas. Viajan por la sangre y actúan en células u órganos diana con receptores específicos.',example:'La insulina y el glucagón son hormonas clave en la regulación de la glucosa.'},
+  {id:'insulina',terms:['insulina'],title:'Insulina',body:'Hormona del páncreas endocrino que favorece la entrada y almacenamiento de glucosa en tejidos diana, ayudando a disminuir la glicemia.',example:'Si falla su acción, puede haber glucosa alta en sangre pero bajo uso celular de energía.'},
+  {id:'glucagon',terms:['glucagón'],title:'Glucagón',body:'Hormona pancreática que ayuda a elevar la glicemia, principalmente estimulando al hígado a liberar glucosa.',example:'Actúa como contraparte de la insulina para sostener la homeostasis.'},
+  {id:'homeostasis',terms:['homeostasis'],title:'Homeostasis',body:'Capacidad del organismo de mantener condiciones internas relativamente estables, como glucosa, agua, temperatura y pH.',example:'Valentina pierde homeostasis cuando se alteran glicemia, hidratación, respiración y conciencia.'},
+  {id:'retroalimentacion',terms:['retroalimentación negativa'],title:'Retroalimentación negativa',body:'Mecanismo de regulación en que la respuesta del cuerpo se opone al cambio inicial para volver a un rango normal.',example:'Si sube la glicemia, el cuerpo debería activar mecanismos que ayuden a bajarla.'},
+  {id:'glicemia',terms:['glicemia','glucosa'],title:'Glicemia',body:'Concentración de glucosa en sangre. Una glicemia alta no significa necesariamente que las células estén usando bien esa glucosa.',example:'Este es uno de los errores conceptuales más peligrosos en el caso.'},
+  {id:'cetonas',terms:['cetonas'],title:'Cetonas',body:'Moléculas producidas cuando el cuerpo usa grasas como fuente alternativa de energía. Elevadas en exceso pueden asociarse a acidosis.',example:'Cetonas +++ ayudan a explicar respiración profunda y descompensación.'},
+  {id:'organos-diana',terms:['órganos diana','órgano diana','células diana','tejidos diana'],title:'Órganos diana',body:'Órganos o células que responden a una hormona porque tienen receptores específicos para ella.',example:'Hígado, músculo y tejido adiposo son órganos diana importantes para insulina y glucagón.'},
+  {id:'receptores',terms:['receptores','receptor'],title:'Receptores',body:'Proteínas celulares que reconocen señales específicas, como hormonas, y permiten que la célula responda.',example:'Una hormona puede circular por todo el cuerpo, pero solo actúa donde hay receptores adecuados.'},
+  {id:'compensacion',terms:['compensación respiratoria','respiración profunda'],title:'Compensación respiratoria',body:'Respuesta del cuerpo para intentar corregir un desequilibrio interno, por ejemplo eliminando CO₂ mediante respiraciones profundas.',example:'No debe confundirse automáticamente con ansiedad.'},
+  {id:'deshidratacion',terms:['deshidratación','piel seca','mucosas secas'],title:'Deshidratación',body:'Pérdida excesiva de agua corporal. En hiperglicemia severa puede aumentar por pérdida de agua en orina.',example:'Explica sed intensa, debilidad y parte del deterioro de Valentina.'}
+];
+const GLOSSARY_BY_ID=Object.fromEntries(GLOSSARY.map(x=>[x.id,x]));
+const GLOSSARY_TERMS=GLOSSARY.flatMap(x=>x.terms.map(t=>({term:t,id:x.id}))).sort((a,b)=>b.term.length-a.term.length);
+function escapeRegExp(value){return value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+function glossaryRegex(term){return new RegExp(`(^|[^\\p{L}\\p{N}_])(${escapeRegExp(term)})(?=$|[^\\p{L}\\p{N}_])`,'giu');}
+function applyGlossary(root=document.body){
+  if(!root) return;
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
+    const parent=node.parentElement;
+    if(!parent||!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+    if(parent.closest('script,style,textarea,input,.glossary-term,#glossary-backdrop')) return NodeFilter.FILTER_REJECT;
+    return GLOSSARY_TERMS.some(({term})=>glossaryRegex(term).test(node.nodeValue))?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
+  }});
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node=>{
+    let html=node.nodeValue;
+    GLOSSARY_TERMS.forEach(({term,id})=>{html=html.replace(glossaryRegex(term),(m,prefix,found)=>`${prefix}<span class="glossary-term" tabindex="0" role="button" data-glossary="${id}">${found}</span>`);});
+    if(html!==node.nodeValue){const tpl=document.createElement('template');tpl.innerHTML=html;node.replaceWith(tpl.content.cloneNode(true));}
+  });
+}
+function openGlossary(id){
+  const item=GLOSSARY_BY_ID[id]; if(!item) return;
+  document.getElementById('glossary-title').textContent=item.title;
+  document.getElementById('glossary-body').textContent=item.body;
+  document.getElementById('glossary-example').textContent=item.example||'';
+  document.getElementById('glossary-example').style.display=item.example?'block':'none';
+  document.getElementById('glossary-backdrop').classList.add('show');
+}
+function closeGlossary(){document.getElementById('glossary-backdrop').classList.remove('show');}
+function closeGlossaryOutside(e){if(e.target.id==='glossary-backdrop')closeGlossary();}
+document.addEventListener('click',e=>{const term=e.target.closest('.glossary-term');if(term){e.preventDefault();e.stopPropagation();openGlossary(term.dataset.glossary);}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeGlossary();}});
+
+// ════════════════════════════════════════
+//  STATE + AUTOSAVE
+// ════════════════════════════════════════
+const SAVE_KEY='lumina_endocrino_valentina_v2';
+const S={
+  name:'',stability:32,fr:28,toxina:386,conciencia:4,sinapsis:'+++',
+  phase:1,alertsResolved:0,totalCorrect:0,errors:0,
+  investUnlocked:[],helpUses:{adjunto:1,pista:2,examen:1},
+  surpriseFired:{},phasesUnlocked:{1:false,2:false,3:false,4:false},
+  canGoInforme:false,caseClosed:false,congratsShown:false,startTime:null,optionOrder:{},resolvedIds:[],stressLevel:0,
+};
+function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...S,ts:Date.now()}));}catch(e){}}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
+let alertTimerInterval=null,currentAlertIdOpen=null,popupTimeout=null,phaseTimers=[];
+
+function getRequiredAlerts(){
+  return ALERTS.filter(a=>!a.isText);
+}
+function getAnsweredRequiredCount(){
+  return getRequiredAlerts().filter(a=>S.resolvedIds.includes(a.id)).length;
+}
+function updateStabilizeButtonUI(){
+  const btn=document.getElementById('btn-stabilize-case');
+  const help=document.getElementById('stabilize-helper');
+  if(!btn||!help) return;
+  const total=getRequiredAlerts().length;
+  const answered=getAnsweredRequiredCount();
+  if(S.canGoInforme){
+    btn.disabled=false;
+    btn.textContent='✅ ESTABILIZAR A VALENTINA Y ABRIR INFORME FINAL';
+    help.textContent='Caso listo: ya respondiste todas las alertas obligatorias. Ahora puedes cerrar la emergencia metabólica, recibir la felicitación final y entrar al informe del cuaderno.';
+    help.classList.add('ready');
+  }else{
+    btn.disabled=true;
+    btn.textContent=`🔒 INFORME FINAL BLOQUEADO — ${answered}/${total} ALERTAS RESPONDIDAS`;
+    help.textContent='Debes responder todas las alertas obligatorias del caso. Puedes equivocarte hasta 2 veces; al tercer error, Valentina no sobrevive.';
+    help.classList.remove('ready');
+  }
+}
+
+// ════════════════════════════════════════
+//  INVESTIGATION AREAS
+// ════════════════════════════════════════
+const INVEST_AREAS=
+[
+  {
+    id:'profesora',icon:'👩‍🏫',label:'Relato profesora',locked:false,
+    title:'Lo que vio la profesora acompañante',
+    content:`<p style="font-size:14px;color:#ffd8a8;line-height:1.7;margin-bottom:10px">La profesora entrega una línea de tiempo que cambia la lectura del caso:</p><div class="data-highlight"><div class="dh-row"><div class="dh-key">LUNES-MIÉRCOLES</div><div class="dh-val" style="color:var(--glow4)">Sed intensa, cansancio y salidas frecuentes al baño.</div></div><div class="dh-row"><div class="dh-key">JUEVES</div><div class="dh-val red">Dolor abdominal, náuseas y respiración más profunda.</div></div><div class="dh-row"><div class="dh-key">HOY</div><div class="dh-val red">Vómitos, confusión, debilidad y piel seca.</div></div><div class="dh-row"><div class="dh-key">DATO CLAVE</div><div class="dh-val purple">No hubo golpe, fiebre alta ni consumo confirmado de tóxicos.</div></div></div>`,
+    effect:()=>{updateStability(+4);toast('👩‍🏫 Línea de tiempo registrada');}
+  },
+  {
+    id:'lab',icon:'🧪',label:'Laboratorio metabólico',locked:false,
+    title:'Resultados metabólicos iniciales',
+    content:`<div class="data-highlight"><div class="dh-row"><div class="dh-key">GLICEMIA</div><div class="dh-val red">386 mg/dL</div></div><div class="dh-row"><div class="dh-key">CETONAS</div><div class="dh-val red">Elevadas (+++)</div></div><div class="dh-row"><div class="dh-key">HIDRATACIÓN</div><div class="dh-val red">Deshidratación moderada-severa</div></div><div class="dh-row"><div class="dh-key">PATRÓN</div><div class="dh-val purple">Crisis endocrino-metabólica compatible con falla de acción de insulina.</div></div></div><div style="background:rgba(255,176,0,.07);border:1px solid rgba(255,176,0,.25);padding:10px;margin-top:8px"><div style="font-family:var(--mono);font-size:9px;color:var(--glow);margin-bottom:4px">💡 MECANISMO CLAVE</div><div style="font-size:12px;color:#ffd8a8;line-height:1.6">Mucha glucosa en sangre no significa energía disponible para las células. Si la acción de la insulina falla, la glucosa no entra bien a tejidos diana y el cuerpo empieza a usar grasas, produciendo cetonas.</div></div>`,
+    effect:()=>{updateStability(+5);updateToxina(-18);toast('🧪 Laboratorio integrado');}
+  },
+  {
+    id:'endocrino',icon:'🟠',label:'Mapa endocrino',locked:false,
+    title:'Red endocrina implicada',
+    content:`<p style="font-size:14px;color:#ffd8a8;margin-bottom:10px">Estructuras y órganos que deben conectarse en el caso:</p><div class="data-highlight"><div class="dh-row"><div class="dh-key">PÁNCREAS</div><div class="dh-val red">Insulina y glucagón regulan la glicemia.</div></div><div class="dh-row"><div class="dh-key">HÍGADO</div><div class="dh-val" style="color:var(--glow4)">Almacena/libera glucosa según señales hormonales.</div></div><div class="dh-row"><div class="dh-key">MÚSCULO Y TEJIDO ADIPOSO</div><div class="dh-val purple">Órganos diana sensibles a la acción de la insulina.</div></div><div class="dh-row"><div class="dh-key">RIÑÓN</div><div class="dh-val red">Pierde agua y glucosa cuando la glicemia supera el umbral.</div></div></div>`,
+    effect:()=>{updateStability(+4);toast('🟠 Mapa endocrino registrado');}
+  },
+  {
+    id:'homeostasis',icon:'⚖️',label:'Homeostasis',locked:false,
+    title:'El equilibrio que se rompió',
+    content:`<div class="data-highlight"><div class="dh-row"><div class="dh-key">NORMAL</div><div class="dh-val" style="color:var(--glow3)">Sube glucosa → aumenta acción de insulina → células captan glucosa → baja glicemia.</div></div><div class="dh-row"><div class="dh-key">EN VALENTINA</div><div class="dh-val red">Glucosa alta + baja acción efectiva de insulina → células no usan bien glucosa → cetonas + deshidratación.</div></div><div class="dh-row"><div class="dh-key">CONSECUENCIA</div><div class="dh-val red">Compensación respiratoria, confusión y riesgo de colapso metabólico.</div></div></div>`,
+    effect:()=>{updateStability(+4);toast('⚖️ Homeostasis revisada');}
+  },
+  {
+    id:'familia',icon:'👪',label:'Familia',locked:true,
+    title:'Cómo explicarlo a la familia',
+    content:`<p style="font-size:14px;color:#ffd8a8;line-height:1.7">La familia necesita una explicación simple: el cuerpo de Valentina tenía mucha glucosa circulando, pero sus células no podían usarla bien por una falla en la acción de la insulina. El organismo intentó compensar usando grasa, generando cetonas, perdiendo agua y respirando más profundo para corregir el desequilibrio. El equipo no trató “un dolor de guata”: trató una pérdida peligrosa de homeostasis.</p>`,
+    effect:()=>{}
+  }
+]
+;
+
+// ════════════════════════════════════════
+//  ALERTS — 25 PREGUNTAS NIVEL 2° MEDIO
+//  Correct answer distribution: A=7 B=6 C=6 D=6
+//  3 instakill questions
+// ════════════════════════════════════════
+const ALERTS=[
+{
+  id:"e1",phase:1,type:"critical",typeLabel:"⚠ TRIAGE — INGRESO",
+  title:"Respiración profunda, vómitos y confusión",
+  preview:"El box recibe datos mezclados: no todos apuntan al mismo sistema.",
+  timed:false,
+  narrative:`Valentina ingresa con <strong>vómitos, piel seca, respiración profunda, glicemia 386 mg/dL y confusión</strong>. El equipo está dividido: algunos ven un cuadro digestivo, otros ansiedad por hiperventilación. La jefa pide una lectura inicial que no pierda el patrón completo.`,
+  question:"¿Qué interpretación inicial organiza mejor el caso sin reducirlo a un solo síntoma?",
+  options:[
+    {text:"Un cuadro digestivo con hiperventilación secundaria, porque los vómitos y el dolor abdominal pueden explicar la sed, la debilidad y una glicemia transitoriamente alta por estrés.",correct:false},
+    {text:"Una crisis endocrino-metabólica probable, porque la glicemia crítica, la deshidratación, la respiración profunda y la confusión sugieren pérdida de homeostasis más allá del tubo digestivo.",correct:true},
+    {text:"Un episodio ansioso con síntomas físicos intensos, porque la respiración profunda y la taquicardia pueden alterar la percepción corporal y simular una urgencia metabólica.",correct:false},
+    {text:"Una deshidratación primaria por baja ingesta de agua, porque la piel seca y la sed bastan para explicar la respiración profunda sin necesidad de pensar en hormonas.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La clave no es elegir el síntoma más llamativo, sino integrar <strong>glicemia, hidratación, respiración y conciencia</strong>. Esa combinación empuja a pensar en una crisis endocrino-metabólica.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Las opciones digestiva, ansiosa o deshidratación simple pueden parecer posibles, pero no integran todos los datos críticos del caso.`},
+  onCorrect:()=>{updateStability(+7);updateFR(-1);},
+  onFail:()=>{updateStability(-5);updateFR(+1);},
+},
+{
+  id:"e2",phase:1,type:"nurse",typeLabel:"👩‍⚕️ ENFERMERÍA — RELATO",
+  title:"La profesora entrega una pista de varios días",
+  preview:"Sed, baja de peso y salidas al baño precedieron la crisis.",
+  timed:false,
+  narrative:`La profesora dice: <strong>“No empezó hoy. Llevaba días pidiendo agua, saliendo al baño y viéndose más cansada. Hoy recién vomitó y se desorientó.”</strong> El dato retrospectivo puede cambiar por completo la lectura del caso.`,
+  question:"¿Qué conjunto de antecedentes previos pesa más para sospechar alteración de la regulación de glucosa?",
+  options:[
+    {text:"Sed intensa, micción frecuente, cansancio y baja de peso progresiva, porque sugieren un desequilibrio metabólico que venía instalándose antes del colapso actual.",correct:true},
+    {text:"Dolor abdominal y vómitos del mismo día, porque los síntomas agudos siempre tienen más valor diagnóstico que cualquier antecedente de varios días.",correct:false},
+    {text:"Estrés escolar, cansancio y respiración profunda, porque en adolescentes el estrés puede explicar por sí solo la mayoría de las alteraciones corporales intensas.",correct:false},
+    {text:"Sed y piel seca, pero solo como señal de que no tomó suficiente agua; no aportan información sobre glicemia si no se acompañan de fiebre.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Sed persistente + poliuria + cansancio + baja de peso forman una pista longitudinal. No es un evento aislado de la mañana.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El antecedente de varios días es la pista viva del caso. Si lo ignoras, la urgencia parece mucho más simple de lo que es.`},
+  onCorrect:()=>{updateStability(+5);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e3",phase:1,type:"lab",typeLabel:"🧪 LABORATORIO — GLICEMIA",
+  title:"Glicemia 386 mg/dL: ¿energía disponible o crisis?",
+  preview:"El número es crítico, pero puede interpretarse mal.",
+  timed:false,
+  narrative:`Laboratorio confirma glicemia muy elevada. En el box alguien comenta: <strong>“Si tiene tanta glucosa, entonces energía no le falta.”</strong> La frase suena lógica, pero puede ser una trampa conceptual.`,
+  question:"¿Cuál es la lectura biológica más precisa de una glicemia muy alta en este contexto?",
+  options:[
+    {text:"La glucosa alta garantiza energía celular suficiente; si Valentina está confusa, la causa debe buscarse fuera del metabolismo de la glucosa.",correct:false},
+    {text:"La glucosa elevada solo importa si aparece fiebre; sin fiebre, el valor puede esperar porque las células pueden usarla de manera normal.",correct:false},
+    {text:"La glucosa está elevada en sangre, pero si falla la acción de la insulina puede no entrar adecuadamente a tejidos diana, produciendo crisis energética y deshidratación osmótica.",correct:true},
+    {text:"La glicemia alta significa exceso de glucagón como único problema; por eso bastaría con bloquear el hígado y no evaluar hidratación ni respiración.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Muy bien: <strong>glucosa en sangre</strong> no equivale automáticamente a <strong>glucosa útil dentro de la célula</strong>. Ese matiz sostiene todo el caso.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El error peligroso es creer que “mucha glucosa” siempre significa “mucha energía celular disponible”.`},
+  onCorrect:()=>{updateStability(+6);updateToxina(-12);},
+  onFail:()=>{updateStability(-4);updateToxina(+8);},
+},
+{
+  id:"e4",phase:1,type:"neuro",typeLabel:"🟠 ENDOCRINOLOGÍA — SISTEMA",
+  title:"Endocrino vs nervioso bajo presión",
+  preview:"La coordinación corporal no siempre ocurre con impulsos rápidos.",
+  timed:false,
+  narrative:`La residente de turno pide distinguir qué tipo de señal explica mejor un cuadro que se arrastra por días y luego se vuelve crítico en minutos.`,
+  question:"¿Qué comparación entre sistema endocrino y sistema nervioso se aplica mejor al caso de Valentina?",
+  options:[
+    {text:"El sistema nervioso actúa solo sobre músculos voluntarios, mientras que el endocrino actúa solo sobre el intestino; por eso ambos casi no se relacionan con este caso.",correct:false},
+    {text:"El endocrino usa hormonas que viajan por sangre hacia órganos con receptores específicos; sus efectos pueden ser más lentos, amplios y sostenidos que una señal nerviosa puntual.",correct:true},
+    {text:"El endocrino transmite impulsos eléctricos por axones largos, por eso explica mejor las respuestas inmediatas que cualquier señal nerviosa.",correct:false},
+    {text:"El sistema nervioso y el endocrino usan exactamente la misma vía de comunicación, de modo que diferenciarlos no aporta al análisis del caso.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Valentina obliga a pensar en <strong>hormonas circulantes, órganos diana y duración de la señal</strong>. Esa es la lógica endocrina.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`No confundas impulsos eléctricos rápidos con señales hormonales que viajan por sangre y sostienen respuestas amplias.`},
+  onCorrect:()=>{updateStability(+5);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e5",phase:1,type:"critical",typeLabel:"⚠ GLÁNDULA CLAVE",
+  title:"¿Qué páncreas importa aquí?",
+  preview:"No todo el páncreas hace lo mismo.",
+  timed:false,
+  narrative:`En el box alguien dice: <strong>“el páncreas es digestivo, así que debe ser un problema de enzimas para digerir comida.”</strong> La afirmación contiene una parte cierta, pero desvía el foco principal.`,
+  question:"¿Qué función pancreática es central para interpretar esta crisis?",
+  options:[
+    {text:"La función exocrina, porque las enzimas digestivas pancreáticas regulan directamente la cantidad de glucosa que circula en la sangre minuto a minuto.",correct:false},
+    {text:"La función endocrina, porque los islotes pancreáticos liberan hormonas como insulina y glucagón que coordinan la glicemia con hígado, músculo y tejido adiposo.",correct:true},
+    {text:"La función mecánica del páncreas, porque el órgano se contrae para empujar glucosa desde la sangre hacia las células cuando sube la glicemia.",correct:false},
+    {text:"La función respiratoria del páncreas, porque la respiración profunda depende de conductos pancreáticos que eliminan glucosa por los pulmones.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La versión difícil del caso está aquí: el páncreas no solo participa en digestión; su parte endocrina regula la glucosa con hormonas.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`La función exocrina existe, pero este caso exige mirar la función <strong>endocrina</strong> del páncreas.`},
+  onCorrect:()=>{updateStability(+6);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e6",phase:1,type:"critical",typeLabel:"⚡ DECISIÓN CRÍTICA — INSTAKILL",
+  instakill:true,
+  title:"Interpretación peligrosa: “con tanta glucosa está alimentada”",
+  preview:"Un razonamiento falso puede retrasar soporte vital.",
+  timed:true,timeLimit:45,
+  narrative:`<strong class="red" style="color:var(--glow2)">🚨 ALERTA ÁMBAR</strong><br>Valentina está más somnolienta. Una voz del equipo dice: <strong>“No parece grave: si tiene mucha glucosa en sangre, sus células tienen energía de sobra. Observemos.”</strong>`,
+  question:"¿Qué respuesta debes dar de inmediato?",
+  options:[
+    {text:"Aceptar la observación pasiva, porque la glicemia alta protege a las células del cerebro y disminuye el riesgo de compromiso de conciencia.",correct:false},
+    {text:"Corregir la idea: con falla de acción de insulina puede haber mucha glucosa circulando y, aun así, mala entrada celular de glucosa; la crisis no debe observarse pasivamente.",correct:true},
+    {text:"Pedir una bebida azucarada para que la glucosa pase de la sangre al cerebro por simple concentración, evitando tratamientos adicionales.",correct:false},
+    {text:"Centrarse solo en el dolor abdominal, porque mientras exista glucosa alta no hay urgencia metabólica real.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La frase “tiene azúcar, entonces está alimentada” es peligrosa. La crisis está en la <strong>utilización y regulación</strong> de esa glucosa.`},
+  feedbackFail:{title:'💀 DECISIÓN FATAL — INSTAKILL',text:`Observar pasivamente una glicemia crítica con confusión, vómitos y respiración profunda retrasa una urgencia. Valentina se deterioró rápidamente.`},
+  onCorrect:()=>{updateStability(+10);updateToxina(-18);updateConciencia(+1);},
+  onFail:()=>{triggerDeath('La crisis metabólica avanzó mientras el equipo asumía erróneamente que la glucosa alta significaba energía celular suficiente. Valentina perdió conciencia y no respondió a la intervención tardía.');},
+},
+{
+  id:"e7",phase:2,type:"neuro",typeLabel:"🟠 ENDOCRINOLOGÍA — INSULINA",
+  title:"Insulina: no es solo “bajar azúcar”",
+  preview:"La hormona conecta sangre, células y almacenamiento.",
+  timed:false,
+  narrative:`La jefa de endocrino pregunta: <strong>“No me digan solo que la insulina baja el azúcar. Expliquen qué hace realmente sobre los tejidos.”</strong>`,
+  question:"¿Qué opción describe mejor la función de la insulina en este caso?",
+  options:[
+    {text:"Actúa como hormona que favorece la entrada y almacenamiento de glucosa en tejidos diana como músculo, tejido adiposo e hígado, ayudando a bajar la glicemia.",correct:true},
+    {text:"Destruye químicamente la glucosa dentro de la sangre, por eso si falta insulina la glucosa queda intacta y se vuelve tóxica por contacto directo.",correct:false},
+    {text:"Eleva la glicemia estimulando al hígado a liberar glucosa cuando el cuerpo necesita más combustible durante el ayuno.",correct:false},
+    {text:"Funciona solo sobre neuronas del cerebro; por eso la glicemia alta no tiene relación con músculo, hígado ni tejido adiposo.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Insulina no “borra” glucosa: coordina entrada, uso y almacenamiento en órganos diana.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`La insulina actúa sobre tejidos diana. No destruye glucosa ni funciona solo en el cerebro.`},
+  onCorrect:()=>{updateStability(+7);updateToxina(-15);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e8",phase:2,type:"lab",typeLabel:"🧪 LABORATORIO — GLUCAGÓN",
+  title:"Glucagón: el otro lado del equilibrio",
+  preview:"No toda hormona pancreática baja la glicemia.",
+  timed:false,
+  narrative:`La jefa de endocrino pregunta por la hormona que normalmente actúa cuando la glicemia baja o cuando el cuerpo necesita liberar reservas.`,
+  question:"¿Qué papel cumple el glucagón dentro de la homeostasis de la glucosa?",
+  options:[
+    {text:"Es la hormona pancreática que favorece la entrada de glucosa a músculo y tejido adiposo, actuando igual que la insulina pero más lentamente.",correct:false},
+    {text:"Es una hormona producida por el hígado que elimina cetonas cuando hay vómitos, por eso reemplaza el rol de la insulina en crisis.",correct:false},
+    {text:"Es una hormona pancreática que ayuda a elevar la glicemia estimulando principalmente al hígado a liberar glucosa cuando el cuerpo la necesita.",correct:true},
+    {text:"Es una enzima digestiva que rompe carbohidratos en el intestino y por eso se activa cuando la glicemia ya está alta.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Glucagón e insulina funcionan como fuerzas opuestas para sostener rangos adecuados de glicemia.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El glucagón no actúa igual que la insulina. Su papel principal es ayudar a elevar la glicemia cuando hace falta.`},
+  onCorrect:()=>{updateStability(+6);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e9",phase:2,type:"critical",typeLabel:"⚠ HOMEOSTASIS",
+  title:"El equilibrio interno ya no se sostiene",
+  preview:"Glicemia, agua, respiración y conciencia se mueven juntos.",
+  timed:false,
+  narrative:`Los signos de Valentina no son piezas separadas. La glicemia altera el agua; la pérdida de agua altera circulación y conciencia; las cetonas alteran el equilibrio químico; la respiración intenta compensar.`,
+  question:"¿Qué definición aplicada de homeostasis ayuda más a comprender el caso?",
+  options:[
+    {text:"Mantener variables internas dentro de rangos compatibles con la vida mediante mecanismos de regulación que responden a cambios, como glicemia, agua y pH.",correct:true},
+    {text:"Mantener todos los valores del cuerpo idénticos durante todo el día, sin variaciones por alimentación, estrés, sueño o actividad física.",correct:false},
+    {text:"Activar siempre la respuesta más intensa posible, aunque el valor alterado ya se haya corregido, para evitar que vuelva a cambiar.",correct:false},
+    {text:"Depender solo del sistema nervioso central, porque las hormonas actúan demasiado lento para participar en el equilibrio interno.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Homeostasis no es inmovilidad: es regulación dinámica para sostener rangos seguros.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El caso muestra variables conectadas. Homeostasis es equilibrio regulado, no ausencia absoluta de cambio.`},
+  onCorrect:()=>{updateStability(+7);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e10",phase:2,type:"lab",typeLabel:"🧪 LABORATORIO — FEEDBACK",
+  title:"Retroalimentación negativa: corregir, no amplificar",
+  preview:"El cuerpo intenta volver a rango, no exagerar la desviación.",
+  timed:false,
+  narrative:`La residente debe explicar por qué la regulación de la glicemia normalmente se parece a un termostato: detecta desviaciones y corrige en sentido contrario.`,
+  question:"¿Cuál opción representa mejor una retroalimentación negativa en la regulación de glicemia?",
+  options:[
+    {text:"Si la glicemia sube, una respuesta hormonal adecuada favorece que disminuya hacia rango normal; si baja, otra respuesta ayuda a elevarla.",correct:true},
+    {text:"Si la glicemia sube, el cuerpo debería elevarla aún más para que todas las células reciban más combustible de manera inmediata.",correct:false},
+    {text:"Si la glicemia cambia, el cuerpo no debería responder porque cualquier regulación hormonal rompería la estabilidad interna.",correct:false},
+    {text:"Si la glicemia baja, la insulina debería aumentar más para impedir que el hígado libere glucosa y mantener la sangre sin variaciones.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Retroalimentación negativa significa corregir la desviación: subir lo bajo, bajar lo alto.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El cuerpo no debe amplificar el error; debe responder en sentido correctivo.`},
+  onCorrect:()=>{updateStability(+7);updateToxina(-10);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e11",phase:2,type:"nurse",typeLabel:"👩‍⚕️ ENFERMERÍA — AGUA",
+  title:"Sed intensa y orina frecuente",
+  preview:"El riñón empieza a contar la historia del azúcar.",
+  timed:false,
+  narrative:`Enfermería registra mucosas secas. La profesora insiste: <strong>“No era sed normal; llenó la botella muchas veces y pedía salir al baño.”</strong>`,
+  question:"¿Por qué una glicemia muy alta puede causar sed intensa, micción frecuente y deshidratación?",
+  options:[
+    {text:"Porque la glucosa elevada puede arrastrar agua hacia la orina cuando el riñón no logra reabsorberla toda, provocando pérdida de líquido y aumento de la sed.",correct:true},
+    {text:"Porque la glucosa alta se elimina principalmente por sudor, por eso la piel seca demuestra que el riñón ya no participa en el cuadro.",correct:false},
+    {text:"Porque la insulina transforma el agua corporal en glucosa, disminuyendo de inmediato el volumen de sangre disponible.",correct:false},
+    {text:"Porque al subir la glicemia se bloquea la sensación de sed, de modo que la paciente se deshidrata aunque no quiera tomar agua.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La glicemia alta puede producir diuresis osmótica: se pierde agua con glucosa por orina.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`La sed y la orina frecuente no son detalles decorativos: conectan sangre, riñón y agua corporal.`},
+  onCorrect:()=>{updateStability(+7);updateToxina(-8);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e12",phase:2,type:"lab",typeLabel:"🧪 LABORATORIO — CETONAS",
+  title:"Cetonas elevadas: pista de combustible alternativo",
+  preview:"No es solo azúcar: aparece una ruta metabólica de emergencia.",
+  timed:false,
+  narrative:`Laboratorio informa: <strong>cetonas +++</strong>. La respiración de Valentina sigue profunda y el box percibe un olor afrutado.`,
+  question:"¿Qué interpretación es más adecuada para cetonas elevadas en este contexto?",
+  options:[
+    {text:"Indican que el cuerpo está usando grasas como combustible alternativo porque la glucosa no se está utilizando bien; su acumulación puede alterar el equilibrio químico.",correct:true},
+    {text:"Indican que la paciente está bien alimentada y que el cuerpo produce cetonas solo cuando ya no existe riesgo metabólico.",correct:false},
+    {text:"Son hormonas pancreáticas que reemplazan a la insulina cuando esta falta, por lo que su presencia siempre corrige el cuadro.",correct:false},
+    {text:"Son restos de enzimas digestivas que aparecen en sangre por vómitos, sin relación con respiración profunda ni glicemia.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Cetonas +++ sugieren uso de grasa como combustible y ayudan a explicar la respiración compensatoria.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Las cetonas no son “señal de tranquilidad”. En este contexto son una pista de crisis metabólica.`},
+  onCorrect:()=>{updateStability(+8);updateToxina(-12);updateSinapsis('++');},
+  onFail:()=>{updateStability(-5);updateSinapsis('+++');},
+},
+{
+  id:"e13",phase:3,type:"critical",typeLabel:"⚡ DECISIÓN CRÍTICA — INSTAKILL",
+  instakill:true,
+  title:"Vómitos + confusión: ¿se le da bebida azucarada?",
+  preview:"Una intervención aparentemente amable puede ser peligrosa.",
+  timed:true,timeLimit:40,
+  narrative:`<strong class="red" style="color:var(--glow2)">🚨 DECISIÓN INMEDIATA</strong><br>Valentina está vomitando, confusa y con glicemia crítica. Un adulto propone darle bebida azucarada “para que recupere energía”.`,
+  question:"¿Cuál es la decisión más segura y biológicamente coherente?",
+  options:[
+    {text:"Darle bebida azucarada lentamente, porque si las células tienen poca energía la solución más rápida es aumentar todavía más la glucosa en sangre.",correct:false},
+    {text:"No administrar bebida azucarada; mantener evaluación clínica, soporte de hidratación indicado por el equipo y tratamiento endocrino supervisado, porque el problema no es falta simple de azúcar.",correct:true},
+    {text:"Darle jugo solo si vomita, porque el vómito elimina glucosa y deja al cuerpo sin combustible suficiente para sostener la conciencia.",correct:false},
+    {text:"Esperar fuera del box sin monitorización, porque la confusión y los vómitos suelen resolverse al hidratarse por boca.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`No se trata de “dar más azúcar”. La paciente necesita manejo clínico seguro de hidratación, metabolismo y vigilancia.`},
+  feedbackFail:{title:'💀 DECISIÓN FATAL — INSTAKILL',text:`Aumentar azúcar por boca en una paciente confusa, vomitando y con glicemia crítica es una mala decisión. El cuadro se agravó y Valentina aspiró contenido gástrico durante el deterioro.`},
+  onCorrect:()=>{updateStability(+10);updateConciencia(+1);updateToxina(-18);},
+  onFail:()=>{triggerDeath('Se administró bebida azucarada a una paciente confusa, vomitando y con glicemia crítica. La descompensación progresó y el equipo perdió la ventana de estabilización segura.');},
+},
+{
+  id:"e14",phase:3,type:"critical",typeLabel:"⚠ MONITOR — RESPIRACIÓN",
+  title:"Respiración profunda: no es solo ansiedad",
+  preview:"La respiración puede ser una pista metabólica.",
+  timed:false,
+  narrative:`La frecuencia respiratoria sigue alta y profunda. No parece solo “respirar rápido”: cada inspiración es amplia, regular y agotadora.`,
+  question:"¿Qué interpretación es más fina para esta respiración en el caso?",
+  options:[
+    {text:"Puede ser una compensación del organismo frente a alteración química/metabólica; por eso debe integrarse con cetonas, glicemia y estado de conciencia.",correct:true},
+    {text:"Demuestra ansiedad como diagnóstico principal, porque toda respiración profunda en adolescentes se debe a miedo o estrés.",correct:false},
+    {text:"Indica que los pulmones están fabricando glucosa y por eso la glicemia se mantiene elevada.",correct:false},
+    {text:"Permite descartar crisis endocrina, porque el sistema respiratorio no se conecta con la homeostasis metabólica.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La respiración profunda es una pista de compensación, no un detalle aislado.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El error es psicologizar la respiración sin mirar el patrón metabólico completo.`},
+  onCorrect:()=>{updateStability(+7);updateFR(-2);},
+  onFail:()=>{updateStability(-4);updateFR(+1);},
+},
+{
+  id:"e15",phase:3,type:"lab",typeLabel:"🧪 LABORATORIO — ELECTROLITOS",
+  title:"El potasio no aparece en la portada, pero importa",
+  preview:"La crisis no es solo azúcar: también cambia el equilibrio iónico.",
+  timed:false,
+  narrative:`Laboratorio pide control de electrolitos. Un estudiante pregunta por qué revisar sales minerales si la actividad trata sobre hormonas.`,
+  question:"¿Por qué los electrolitos son relevantes en una crisis endocrino-metabólica severa?",
+  options:[
+    {text:"Porque agua, glucosa y tratamiento pueden mover iones como potasio entre sangre y células; esos cambios afectan músculo, corazón y función nerviosa.",correct:true},
+    {text:"Porque los electrolitos son hormonas pancreáticas que reemplazan a la insulina cuando hay vómitos persistentes.",correct:false},
+    {text:"Porque si hay glicemia alta, los electrolitos dejan de participar en el funcionamiento celular hasta que la glucosa vuelva a cero.",correct:false},
+    {text:"Porque los electrolitos solo sirven para medir sed; no tienen relación con corazón, músculo ni neuronas.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Crisis metabólica no es una sola cifra: agua, glucosa e iones se mueven juntos.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Los electrolitos importan porque el equilibrio interno incluye agua, iones y función celular.`},
+  onCorrect:()=>{updateStability(+7);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e16",phase:3,type:"neuro",typeLabel:"🧠 CONCIENCIA — INTEGRACIÓN",
+  title:"¿Por qué una crisis endocrina afecta la mente?",
+  preview:"Valentina responde lento y no ubica bien el lugar.",
+  timed:false,
+  narrative:`Valentina abre los ojos y pregunta dónde está. La profesora dice que hace una hora podía hablar, pero ahora responde lento.`,
+  question:"¿Qué explicación integra mejor el compromiso de conciencia?",
+  options:[
+    {text:"La mente solo cambia por lesiones directas del cerebro, así que una crisis hormonal no puede explicar confusión.",correct:false},
+    {text:"La deshidratación, los cambios químicos y el mal uso celular de glucosa pueden afectar el funcionamiento cerebral aunque el problema inicial sea endocrino-metabólico.",correct:true},
+    {text:"La glucosa alta siempre vuelve al cerebro hiperactivo, por eso la confusión no puede relacionarse con glicemia ni cetonas.",correct:false},
+    {text:"La conciencia baja porque el páncreas produce impulsos nerviosos que reemplazan a las neuronas cerebrales durante la crisis.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`El cerebro depende del equilibrio interno. Un problema endocrino puede hacerse visible como alteración neurológica.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`No todo cambio de conciencia nace como lesión cerebral primaria; puede ser consecuencia de un colapso interno.`},
+  onCorrect:()=>{updateStability(+8);updateConciencia(+1);},
+  onFail:()=>{updateStability(-4);updateConciencia(-1);},
+},
+{
+  id:"e17",phase:3,type:"neuro",typeLabel:"🟠 ENDOCRINOLOGÍA — RECEPTORES",
+  title:"Receptores: no todas las células responden igual",
+  preview:"Una hormona viaja por sangre, pero no todas las células obedecen.",
+  timed:false,
+  narrative:`La jefa de endocrino pregunta: <strong>“Si una hormona viaja por toda la sangre, ¿por qué no actúa igual sobre todas las células?”</strong>`,
+  question:"¿Qué idea explica mejor la especificidad hormonal?",
+  options:[
+    {text:"Las hormonas actúan sobre células u órganos diana que poseen receptores adecuados; sin receptor compatible, la señal no genera la misma respuesta.",correct:true},
+    {text:"Las hormonas eligen mentalmente a qué órgano llegar, por eso no necesitan receptores ni proteínas de membrana.",correct:false},
+    {text:"Todas las células responden igual a cualquier hormona, pero algunas se demoran más por estar lejos del corazón.",correct:false},
+    {text:"Los órganos diana son los órganos que destruyen hormonas antes de que puedan actuar, por eso no generan respuesta.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La especificidad endocrina depende de receptores. La sangre distribuye; el receptor decide quién responde.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Una hormona puede circular por todo el cuerpo, pero solo responde la célula con receptor compatible.`},
+  onCorrect:()=>{updateStability(+6);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e18",phase:3,type:"critical",typeLabel:"⚠ ESTRÉS FISIOLÓGICO",
+  title:"Adrenalina y cortisol entran al caso",
+  preview:"El cuerpo también activa hormonas de emergencia.",
+  timed:false,
+  narrative:`El monitor muestra taquicardia. La paciente está estresada, deshidratada y con respiración profunda. La jefa pregunta cómo las hormonas de estrés podrían influir en el cuadro.`,
+  question:"¿Cómo pueden influir adrenalina y cortisol durante esta crisis?",
+  options:[
+    {text:"Pueden actuar como hormonas contrarreguladoras, favoreciendo disponibilidad de energía y elevación de glucosa, lo que puede empeorar una hiperglicemia si el problema base no se corrige.",correct:true},
+    {text:"Bajan de inmediato la glicemia al mismo nivel que la insulina, por eso siempre son protectoras en una crisis con glucosa alta.",correct:false},
+    {text:"Solo participan en emociones, sin efectos sobre metabolismo, hígado, frecuencia cardíaca ni disponibilidad energética.",correct:false},
+    {text:"Son enzimas digestivas del páncreas exocrino y por eso se elevan únicamente cuando hay dolor abdominal.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Las hormonas de estrés pueden sostener o agravar la disponibilidad de glucosa. El cuerpo intenta sobrevivir, pero puede amplificar el desbalance.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Adrenalina y cortisol no son solo “emociones”: también participan en metabolismo y respuesta de estrés.`},
+  onCorrect:()=>{updateStability(+7);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e19",phase:4,type:"lab",typeLabel:"🧪 RIÑÓN — OSMOLARIDAD",
+  title:"La orina cuenta parte de la historia",
+  preview:"No toda pérdida de agua es por sudor o vómito.",
+  timed:false,
+  narrative:`La inspectora confirma salidas frecuentes al baño. Laboratorio reporta glucosa en orina. El riñón ya no logra manejar toda la carga.`,
+  question:"¿Qué papel tiene el riñón en esta descompensación?",
+  options:[
+    {text:"Cuando la glucosa supera la capacidad de reabsorción renal, parte se elimina por orina y arrastra agua, aumentando poliuria y deshidratación.",correct:true},
+    {text:"El riñón produce insulina cuando el páncreas falla, por eso la glucosa en orina indica que la crisis está resolviéndose sola.",correct:false},
+    {text:"El riñón transforma cetonas en glucagón, lo que explica por completo la respiración profunda.",correct:false},
+    {text:"El riñón no participa en glicemia ni agua; solo aparece en el caso porque la paciente pidió salir al baño.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`El riñón traduce la glicemia alta en pérdida de agua. Eso vuelve el caso más sistémico.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`La glucosa en orina y la deshidratación conectan directamente al riñón con la crisis.`},
+  onCorrect:()=>{updateStability(+8);updateToxina(-12);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e20",phase:4,type:"neuro",typeLabel:"🟠 ENDOCRINOLOGÍA — RED",
+  title:"No todo es páncreas, pero el páncreas lidera",
+  preview:"El mapa endocrino exige jerarquizar sin simplificar.",
+  timed:false,
+  narrative:`Un estudiante podría decir: “si es endocrino, entonces cualquier glándula puede ser la culpable”. La jefa pide jerarquizar sin perder la red completa.`,
+  question:"¿Qué razonamiento es más correcto?",
+  options:[
+    {text:"Varias glándulas influyen en metabolismo, pero el patrón de glicemia alta, cetonas, sed y poliuria apunta primero a falla de acción de insulina/páncreas endocrino.",correct:true},
+    {text:"Toda crisis endocrina se explica siempre por tiroides, aunque la glicemia y las cetonas estén alteradas.",correct:false},
+    {text:"El páncreas puede ignorarse porque hígado, músculo y tejido adiposo son los únicos órganos que regulan la glucosa.",correct:false},
+    {text:"Si hay respiración profunda, el caso deja de ser endocrino y pasa a ser exclusivamente pulmonar.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Buen razonamiento clínico: jerarquizas el eje páncreas-insulina sin negar la red de órganos diana.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`La clave es jerarquizar: no todas las glándulas pesan igual frente a este patrón de datos.`},
+  onCorrect:()=>{updateStability(+8);},
+  onFail:()=>{updateStability(-4);},
+},
+{
+  id:"e21",phase:4,type:"lab",typeLabel:"🧪 INFORME — RESPONSABILIDAD",
+  title:"¿Qué NO debes concluir todavía?",
+  preview:"Un buen informe evita afirmar más de lo demostrado.",
+  timed:false,
+  narrative:`El equipo ya tiene una hipótesis fuerte, pero el informe del residente no debe inventar detalles que no fueron comprobados.`,
+  question:"¿Cuál conclusión es más responsable para esta actividad escolar?",
+  options:[
+    {text:"Valentina presenta una crisis endocrino-metabólica compatible con falla grave en regulación de glucosa; se debe explicar la fisiología sin afirmar diagnósticos permanentes no demostrados.",correct:true},
+    {text:"Valentina necesariamente tendrá una enfermedad crónica de por vida; basta con este caso para cerrar cualquier evaluación posterior.",correct:false},
+    {text:"El caso no tiene relación con endocrino porque también hay respiración y confusión, así que debe omitirse la glicemia del informe.",correct:false},
+    {text:"La causa exacta no importa; solo se debe escribir que tuvo dolor abdominal y que mejoró con descanso.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`La precisión también es científica: explicas lo que el caso permite concluir sin sobrediagnosticar.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Un informe serio integra evidencia, pero no inventa diagnósticos permanentes sin datos suficientes.`},
+  onCorrect:()=>{updateStability(+7);},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e22",phase:4,type:"critical",typeLabel:"⚡ DECISIÓN CRÍTICA — INSTAKILL",
+  instakill:true,
+  title:"La decisión inaceptable",
+  preview:"El box está cansado. Una mala simplificación puede cerrar mal el caso.",
+  timed:true,timeLimit:35,
+  narrative:`<strong class="red" style="color:var(--glow2)">🚨 ÚLTIMO PUNTO CRÍTICO</strong><br>Valentina parece algo más tranquila, pero sigue deshidratada, con laboratorio alterado y respiración profunda. Alguien propone cerrar como “ansiedad con dolor abdominal” para descongestionar el box.`,
+  question:"¿Qué decisión sería inaceptable en este momento?",
+  options:[
+    {text:"Mantener vigilancia y explicar el cuadro como una crisis metabólica que requiere integración de glicemia, hidratación, cetonas, respiración y conciencia.",correct:false},
+    {text:"Minimizar el caso como ansiedad/dolor abdominal, retirar monitorización y cerrar sin integrar glicemia crítica, cetonas, deshidratación ni respiración compensatoria.",correct:true},
+    {text:"Registrar el caso como estabilización parcial y dejar el informe final para explicar la fisiología con lenguaje claro.",correct:false},
+    {text:"Solicitar apoyo del equipo y revisar nuevamente los datos antes de comunicar a la familia lo ocurrido.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Exacto: lo inaceptable era cerrar el caso como ansiedad/dolor simple ignorando el patrón metabólico completo.`},
+  feedbackFail:{title:'💀 DECISIÓN FATAL — INSTAKILL',text:`Se cerró la vigilancia ignorando datos críticos. La crisis metabólica progresó fuera de monitorización y Valentina se deterioró.`},
+  onCorrect:()=>{updateStability(+10);updateConciencia(+1);},
+  onFail:()=>{triggerDeath('El caso fue minimizado como ansiedad/dolor abdominal pese a glicemia crítica, cetonas y deshidratación. Al retirar vigilancia, Valentina se deterioró sin intervención oportuna.');},
+},
+{
+  id:"e23",phase:4,type:"critical",typeLabel:"⚠ INTEGRACIÓN — SECUENCIA",
+  title:"Ordena mentalmente el caos",
+  preview:"Para cerrar el caso, debes reconstruir la cascada fisiológica.",
+  timed:false,
+  narrative:`La Dra. Reyes pide la cadena completa: <strong>“No me den palabras sueltas. Quiero que conecten hormona, sangre, células, agua, cetonas y respiración.”</strong>`,
+  question:"¿Qué secuencia explica mejor la progresión del caso?",
+  options:[
+    {text:"Falla de acción de insulina → glucosa no entra bien a tejidos diana → hiperglicemia y uso de grasas → cetonas/alteración química → deshidratación y respiración compensatoria → confusión.",correct:true},
+    {text:"Dolor abdominal → ansiedad → respiración profunda → páncreas produce glucosa → riñón fabrica cetonas → se altera la conciencia.",correct:false},
+    {text:"Respiración profunda → pulmones crean glucosa → aumenta insulina → se apaga el sistema endocrino completo → aparece sed intensa.",correct:false},
+    {text:"Deshidratación simple → glucosa desaparece de la sangre → el cerebro se hiperactiva → aparecen cetonas protectoras que corrigen el cuadro.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Esa cadena convierte el caos en fisiología comprensible.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`Necesitas una cascada causal coherente: hormona → glucosa → tejidos → agua/cetonas → respiración/conciencia.`},
+  onCorrect:()=>{updateStability(+10);updateToxina(-20);updateFR(-2);},
+  onFail:()=>{updateStability(-5);},
+},
+{
+  id:"e24",phase:4,type:"nurse",typeLabel:"👩‍⚕️ FAMILIA — COMUNICACIÓN",
+  title:"La familia necesita entender sin tecnicismos",
+  preview:"La madre pregunta qué pasó y si fue solo azúcar alta.",
+  timed:false,
+  narrative:`La madre de Valentina pregunta: <strong>“¿Entonces era solo que tenía azúcar alta? ¿Por qué respiraba así y estaba confundida?”</strong>`,
+  question:"¿Qué explicación sería más clara y correcta para la familia?",
+  options:[
+    {text:"Valentina tuvo una alteración en la regulación hormonal de la glucosa. Había mucha glucosa en sangre, pero su cuerpo no la estaba usando bien; eso produjo deshidratación, sustancias ácidas y respiración compensatoria.",correct:true},
+    {text:"Fue principalmente ansiedad escolar. La glucosa alta aparece en casi todas las crisis emocionales y por eso no explica realmente los vómitos ni la confusión.",correct:false},
+    {text:"Su páncreas dejó de hacer digestión por unas horas, por eso el estómago produjo azúcar y el cerebro se confundió.",correct:false},
+    {text:"La respiración profunda fue un intento de sacar glucosa por los pulmones; cuando eso ocurre, no hay riesgo metabólico importante.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Comunicar bien también es parte del cierre: claro, simple y sin perder precisión.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`La familia necesita una explicación simple, pero no falsa. Evita reducirlo a ansiedad o “azúcar alta” sin mecanismo.`},
+  onCorrect:()=>{updateStability(+8);unlockInvestArea("familia");toast("👪 Comunicación familiar desbloqueada en Investigar");},
+  onFail:()=>{updateStability(-3);},
+},
+{
+  id:"e25",phase:4,type:"critical",typeLabel:"✅ CIERRE CLÍNICO",
+  title:"¿Cuándo puedes estabilizar y cerrar?",
+  preview:"La última decisión es integrar, no adivinar.",
+  timed:false,
+  narrative:`Valentina comienza a responder mejor. La respiración sigue profunda pero menos caótica. El laboratorio ya tiene patrón coherente y el equipo está listo para cerrar la emergencia.`,
+  question:"¿Qué criterio permite cerrar responsablemente el caso educativo?",
+  options:[
+    {text:"Que una sola cifra de glicemia baje un poco, aunque persistan confusión, deshidratación y falta de explicación del patrón.",correct:false},
+    {text:"Haber integrado glicemia, insulina/glucagón, homeostasis, órganos diana, cetonas, deshidratación y respiración compensatoria en una explicación coherente del cuadro.",correct:true},
+    {text:"Que la familia se tranquilice, aunque los datos metabólicos sigan sin explicación y no se haya reconstruido la secuencia fisiológica.",correct:false},
+    {text:"Que desaparezca el dolor abdominal por unos minutos, porque ese síntoma es el único que define la gravedad del caso.",correct:false}
+  ],
+  feedbackOk:{title:'✅ Correcto',text:`Excelente cierre: estabilizar no es memorizar una cifra, es integrar el sistema completo.`},
+  feedbackFail:{title:'⚠ Revisa tu razonamiento',text:`El cierre responsable exige integrar el cuadro completo, no depender de una señal aislada.`},
+  onCorrect:()=>{updateStability(+12);updateToxina(-28);updateFR(-3);updateConciencia(+2);unlockInvestArea("familia");toast("✅ Familia desbloqueada en Investigar");},
+  onFail:()=>{updateStability(-4);},
+}
+];
+
+// ════════════════════════════════════════
+//  SURPRISES (10)
+// ════════════════════════════════════════
+const SURPRISES=[
+  {id:'s0',trigger:'phase2',icon:'💧',title:'¡Enfermería reporta deshidratación progresiva!',text:'Mucosas secas, piel fría y sed intensa. La pérdida de agua ya no parece secundaria: el riñón está participando en el mecanismo de la crisis.',effect:()=>{updateStability(-4);updateFR(+1);}},
+  {id:'s1',trigger:'phase3',icon:'🧪',title:'¡Laboratorio confirma cetonas +++!',text:'El cuerpo está usando grasas como combustible alternativo. Esto explica el olor afrutado y vuelve más urgente interpretar la respiración profunda.',effect:()=>{updateStability(-4);updateSinapsis('+++');}},
+  {id:'s2',trigger:'phase4',icon:'📞',title:'¡Llama la madre de Valentina!',text:'La madre informa que Valentina se levantaba de noche a tomar agua y había bajado de peso. El patrón venía construyéndose antes de la urgencia.',effect:()=>{updateStability(+3);}},
+  {id:'s3',trigger:'alerts3',icon:'🚰',title:'¡Registro de baños del colegio!',text:'La inspectora confirma múltiples salidas al baño en dos jornadas. Poliuria y sed empiezan a encajar con el laboratorio.',effect:()=>{updateStability(+3);}},
+  {id:'s4',trigger:'alerts6',icon:'📊',title:'¡Monitor metabólico inestable!',text:'La glicemia sigue crítica y la respiración se mantiene profunda. El equipo pide integrar páncreas, riñón, tejidos diana y compensación respiratoria.',effect:()=>{updateStability(-4);updateToxina(+8);}},
+  {id:'s5',trigger:'alerts2',icon:'👩‍🏫',title:'¡Mensaje urgente de la profesora!',text:'“Pensé que era estrés por pruebas, pero llevaba días agotada y rara.” La historia previa vuelve más fuerte la hipótesis endocrina.',effect:()=>{updateStability(+2);}},
+  {id:'s6',trigger:'phase2b',icon:'🫀',title:'¡Taquicardia sostenida!',text:'El corazón compensa la deshidratación y el estrés fisiológico. No es un dato aislado: el cuerpo completo está intentando sostener la homeostasis.',effect:()=>{updateStability(-4);}},
+  {id:'s7',trigger:'alerts9',icon:'⚖️',title:'¡La homeostasis está al límite!',text:'Glucosa, agua, respiración, cetonas y conciencia se mueven juntos. Si miras solo un número, pierdes el caso.',effect:()=>{updateStability(-2);}},
+  {id:'s8',trigger:'phase3b',icon:'🌬️',title:'¡Respiración profunda persiste!',text:'El patrón respiratorio parece compensatorio. Si se confunde con ansiedad simple, el equipo puede tomar una decisión peligrosamente tardía.',effect:()=>{updateStability(-3);updateFR(+1);}},
+  {id:'s9',trigger:'alerts11',icon:'✅',title:'¡Primer signo de mejoría!',text:'Valentina logra decir su nombre y pregunta por su madre. La integración del caso empieza a estabilizar el box, pero todavía no se puede cerrar.',effect:()=>{updateStability(+6);updateConciencia(+1);updateToxina(-10);}}
+];
+;
+
+// ════════════════════════════════════════
+//  HELPS
+// ════════════════════════════════════════
+const HELPS=
+[
+  {
+    id:'adjunto',icon:'👩‍⚕️',name:'Consulta a la Dra. Reyes',desc:'La jefa de endocrinología te da una pista conceptual sobre la alerta activa.',maxUses:1,
+    fn:()=>{
+      const hints={
+        e1:'No mires solo el síntoma más llamativo. Integra glicemia, respiración, hidratación y conciencia.',
+        e3:'Glucosa en sangre no es lo mismo que glucosa dentro de la célula. Piensa en insulina y órganos diana.',
+        e6:'Esta es una trampa conceptual: mucha glucosa circulando puede coexistir con mala utilización celular.',
+        e12:'Cetonas elevadas sugieren uso de grasa como combustible alternativo. Conecta esto con acidosis y respiración.',
+        e14:'La respiración profunda puede ser compensación fisiológica, no ansiedad.',
+        e23:'Reconstruye la cascada: insulina/tejidos → glucosa en sangre → uso de grasas/cetonas → agua/riñón → respiración/conciencia.',
+        e22:'La pregunta pide identificar lo inaceptable: cerrar como ansiedad/dolor simple ignorando glicemia, cetonas, deshidratación y respiración.'
+      };
+      const cur=getCurrentAlertId();
+      openHintModal(hints[cur]||'Revisa el mapa endocrino: páncreas, hígado, músculo, tejido adiposo y riñón deben conversar en la explicación.');
+    }
+  },
+  {
+    id:'pista',icon:'⚖️',name:'Revisar Concepto Clave',desc:'Accede a una pista biológica sobre homeostasis y hormonas.',maxUses:2,
+    fn:()=>{
+      const pistas=[
+        'Insulina: favorece entrada y almacenamiento de glucosa. Glucagón: ayuda a elevar glicemia cuando baja. Juntas sostienen homeostasis.',
+        'Homeostasis no es una palabra suelta: significa mantener variables internas en rangos adecuados, como glucosa, agua, pH y temperatura.',
+        'Órgano diana: célula o tejido con receptores para una hormona. Sin receptor o señal efectiva, la hormona no logra su efecto.',
+        'Cetonas elevadas + respiración profunda + vómitos + confusión no deben minimizarse como ansiedad.',
+        'El riñón puede perder glucosa y agua cuando la glicemia está muy alta; eso agrava sed y deshidratación.'
+      ];
+      openHintModal(pistas[Math.floor(Math.random()*pistas.length)]);
+    }
+  },
+  {
+    id:'examen',icon:'🧪',name:'Laboratorio Extra',desc:'Solicita un resultado adicional con información clave.',maxUses:1,
+    fn:()=>{
+      openHintModal(`<strong style="color:var(--glow4)">Resultado extra: perfil metabólico</strong><br><br>Glicemia: <span style="color:var(--glow2)">crítica</span><br>Cetonas: <span style="color:var(--glow2)">+++</span><br>Signos de deshidratación: presentes<br>Interpretación: crisis endocrino-metabólica con pérdida de homeostasis. Requiere integrar páncreas, órganos diana, riñón y compensación respiratoria.`);
+      updateStability(+4);
+    }
+  }
+]
+;
+
+// ════════════════════════════════════════
+//  ENGINE + VITALS
+// ════════════════════════════════════════
+function getCurrentAlertId(){return currentAlertIdOpen;}
+
+function updateFR(delta){
+  S.fr=Math.max(0,Math.min(44,S.fr+delta));
+  const el=document.getElementById('v-fr');
+  if(el){el.textContent=S.fr;el.className='vital-val '+(S.fr>=32||S.fr<=8?'danger':S.fr>=24?'warning':'ok');}
+}
+function updateToxina(delta){
+  S.toxina=Math.max(80,Math.min(520,S.toxina+delta));
+  const el=document.getElementById('v-toxina');
+  if(el){el.textContent=S.toxina;el.className='vital-val '+(S.toxina>=330?'danger':S.toxina>=200?'warning':'ok');}
+}
+function updateConciencia(delta){
+  S.conciencia=Math.max(0,Math.min(10,S.conciencia+delta));
+  const el=document.getElementById('v-conciencia');
+  if(el){el.textContent=S.conciencia+'/10';el.className='vital-val '+(S.conciencia<=3?'danger':S.conciencia<=6?'warning':'ok');}
+}
+function updateSinapsis(level){
+  S.sinapsis=level;
+  const el=document.getElementById('v-sinapsis');
+  if(el){el.textContent=level;el.className='vital-val '+(level==='+++'?'danger':level==='++'?'warning':level==='+'?'ok':'ok');}
+}
+function updateStabilityDisplay(){
+  const fill=document.getElementById('stab-fill');const pct=document.getElementById('stab-pct');
+  if(fill&&pct){fill.style.width=S.stability+'%';const c=S.stability>=70?'#39ff14':S.stability>=45?'#ffcc00':'#ff4b6e';fill.style.background=c;pct.style.color=c;pct.textContent=Math.round(S.stability)+'%';}
+}
+function updateStability(delta){
+  S.stability=Math.min(100,Math.max(5,S.stability+delta));
+  updateStabilityDisplay();
+  // update ketone display
+  if(S.stability>=70) updateSinapsis('Bajas');
+  else if(S.stability>=50) updateSinapsis('+');
+  else if(S.stability>=30) updateSinapsis('++');
+  else updateSinapsis('+++');
+  saveGame();
+}
+
+function showToxReport(){
+  const section=document.getElementById('tox-section');const grid=document.getElementById('tox-grid');
+  if(section&&grid){section.style.display='';grid.innerHTML=`<div class="data-cell"><div class="dc-label">Glicemia</div><div class="dc-val alert">${S.toxina} mg/dL</div></div><div class="data-cell"><div class="dc-label">Cetonas</div><div class="dc-val alert">+++</div></div><div class="data-cell"><div class="dc-label">Patrón</div><div class="dc-val purple">Crisis metabólica</div></div><div class="data-cell"><div class="dc-label">Riesgo</div><div class="dc-val" style="color:var(--glow4)">Deshidratación</div></div>`;}
+}
+
+function renderStress(){
+  const fill=document.getElementById('stress-fill');if(!fill) return;
+  const pct=Math.min(100,S.stressLevel*33);
+  fill.style.width=pct+'%';fill.style.background=S.stressLevel===0?'var(--glow3)':S.stressLevel===1?'var(--glow4)':'var(--glow2)';
+}
+
+function addStress(){
+  S.stressLevel++;S.errors++;renderStress();
+  const flash=document.getElementById('wrong-flash');flash.style.display='block';setTimeout(()=>{flash.style.display='none';},700);
+  if(S.stressLevel>=3){setTimeout(()=>triggerDeath('Las decisiones clínicas incorrectas permitieron que la crisis metabólica siguiera avanzando. La deshidratación, la acidosis y el compromiso de conciencia terminaron en colapso.'),1200);}
+  else{const msgs=['⚠ Error clínico — La crisis metabólica avanza en Valentina','⚠ Segundo error — Estado metabólico se deteriora. Actúa mejor.'];toast(msgs[S.stressLevel-1]||'⚠ Error clínico');}
+}
+
+function triggerDeath(cause){
+  document.getElementById('death-cause-text').textContent=cause||'Las decisiones clínicas incorrectas causaron el deterioro metabólico de Valentina.';
+  document.getElementById('death-alerts').textContent=S.alertsResolved+'/'+getRequiredAlerts().length;
+  document.getElementById('death-errors').textContent=S.errors;
+  closeModal();clearSave();showScreen('s-death');
+}
+
+// ════════════════════════════════════════
+//  ENTRY SEQUENCE
+// ════════════════════════════════════════
+function beginSequence(){
+  showScreen('s-loading');
+  const bar=document.getElementById('loading-bar');const status=document.getElementById('loading-status');
+  const steps=[...document.querySelectorAll('#loading-steps .loading-step')];
+  const labels=['Validando credencial del residente.','Cargando monitoreo metabólico — box 7.','Enlazando glicemia, cetonas y respiración compensatoria.','Analizando muestra sanguínea con laboratorio.','Protocolo Ámbar desplegado — prioridad máxima.'];
+  let idx=0;bar.style.width='0%';
+  steps.forEach(s=>{s.classList.remove('active','done');s.textContent=s.textContent.replace('[✓]','[ ]');});
+  const run=()=>{
+    if(idx>0){steps[idx-1].classList.remove('active');steps[idx-1].classList.add('done');steps[idx-1].textContent=steps[idx-1].textContent.replace('[ ]','[✓]');}
+    if(idx<steps.length){steps[idx].classList.add('active');status.textContent=labels[idx];bar.style.width=((idx+1)/steps.length*100)+'%';idx++;setTimeout(run,600);}
+    else{setTimeout(()=>{showScreen('s-checkin');document.getElementById('residentNameEntry')?.focus();},400);}
+  };
+  setTimeout(run,200);
+}
+
+function goToBriefing(){
+  const input=document.getElementById('residentNameEntry');const name=input?input.value.trim():'';
+  if(!name) return;
+  S.name=name.toUpperCase();
+  document.getElementById('hud-name').textContent=S.name;
+  document.getElementById('inf-resident').textContent=S.name;
+  showScreen('s-intro');
+}
+
+function launchCase(){
+  if(!S.name) return;
+  S.startTime=Date.now();showScreen('s-game');
+  renderStress();updateStabilityDisplay();
+  initAlerts();initInvestigation();initHelps();
+}
+
+// ════════════════════════════════════════
+//  ALERTS ENGINE
+// ════════════════════════════════════════
+function stripHTML(s=''){return s.replace(/<[^>]*>/g,'');}
+function wordCount(s=''){return stripHTML(s).trim().split(/\s+/).filter(Boolean).length;}
+function shuffleArray(arr){const c=[...arr];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}return c;}
+function balanceOptions(options){
+  const fillers=['en este caso clínico.','según los datos del caso.','en este contexto endocrino.','durante esta emergencia aguda.','para este cuadro metabólico.'];
+  const counts=options.map(o=>wordCount(o.text));const target=Math.max(...counts);
+  return options.map((o,i)=>{let txt=o.text.trim();let c=wordCount(txt);let f=0;while(target-c>3&&f<fillers.length){txt=txt.replace(/\.$/,'')+' '+fillers[(i+f)%fillers.length];c=wordCount(txt);f++;}return{...o,text:txt};});
+}
+function getPreparedOptions(id){
+  if(S.optionOrder[id]) return S.optionOrder[id];
+  const data=ALERTS.find(a=>a.id===id);if(!data||!data.options) return [];
+  const prep=shuffleArray(balanceOptions(data.options));S.optionOrder[id]=prep;return prep;
+}
+
+function initAlerts(){
+  const inbox=document.getElementById('alert-inbox');inbox.innerHTML='';
+  S.alertsResolved=0;S.totalCorrect=0;S.optionOrder={};
+  S.phasesUnlocked={1:false,2:false,3:false,4:false};S.surpriseFired={};S.resolvedIds=[];
+  phaseTimers.forEach(t=>clearTimeout(t));phaseTimers=[];
+  const p1=ALERTS.filter(a=>a.phase===1);
+  p1.forEach((a,i)=>{const t=setTimeout(()=>addAlertToInbox(a),i*700);phaseTimers.push(t);});
+  S.phasesUnlocked[1]=true;setPhase(1);
+  const t2=setTimeout(()=>{if(!S.phasesUnlocked[2])unlockPhase(2);},22000);phaseTimers.push(t2);
+  const t3=setTimeout(()=>{if(!S.phasesUnlocked[3])unlockPhase(3);},55000);phaseTimers.push(t3);
+  const t4=setTimeout(()=>{if(!S.phasesUnlocked[4])unlockPhase(4);},100000);phaseTimers.push(t4);
+  const ts=setTimeout(()=>maybeFire('s5'),20000);phaseTimers.push(ts);
+  updateStabilizeButtonUI();
+}
+
+function unlockPhase(phase){
+  if(S.phasesUnlocked[phase]) return;
+  S.phasesUnlocked[phase]=true;setPhase(phase);
+  toast({2:'🟠 FASE 2 — Laboratorio metabólico. El patrón hormonal queda al descubierto.',3:'🔴 FASE 3 — Crisis metabólica. Valentina necesita decisiones finas.',4:'🟢 FASE 4 — Integración endocrina. Prepárate para cerrar la emergencia.'}[phase]||'');
+  ALERTS.filter(a=>a.phase===phase).forEach((a,i)=>{const t=setTimeout(()=>addAlertToInbox(a),i*600);phaseTimers.push(t);});
+}
+
+function checkPhaseProgression(){
+  const answered=getAnsweredRequiredCount();
+  if(answered>=4&&!S.phasesUnlocked[2]) unlockPhase(2);
+  if(answered>=8&&!S.phasesUnlocked[3]) unlockPhase(3);
+  if(answered>=14&&!S.phasesUnlocked[4]) unlockPhase(4);
+  if(answered===2) setTimeout(()=>maybeFire('alerts2'),500);
+  if(answered===3) setTimeout(()=>maybeFire('alerts3'),500);
+  if(answered===5) setTimeout(()=>{maybeFire('phase2');maybeFire('phase2b');},500);
+  if(answered===6) setTimeout(()=>maybeFire('alerts6'),500);
+  if(answered===9) setTimeout(()=>{maybeFire('alerts9');maybeFire('phase3b');},500);
+  if(answered===11) setTimeout(()=>maybeFire('alerts11'),500);
+  if(answered>=13&&!S.surpriseFired['phase3']) setTimeout(()=>maybeFire('phase3'),500);
+  if(answered>=17&&!S.surpriseFired['phase4']) setTimeout(()=>maybeFire('phase4'),500);
+
+  const total=getRequiredAlerts().length;
+  if(answered>=total&&!S.canGoInforme){
+    S.canGoInforme=true;
+    toast('🎉 Todas las alertas obligatorias ya fueron respondidas. Valentina sigue con vida: ahora puedes estabilizarlo y abrir el informe final.');
+  }
+  if(answered>=total){
+    document.getElementById('all-done-msg').style.display='block';
+  }
+  updateStabilizeButtonUI();
+}
+
+function maybeFire(id){
+  if(S.surpriseFired[id]) return;
+  const s=SURPRISES.find(s=>s.id===id)||SURPRISES.find(s=>s.trigger===id);
+  if(!s) return;
+  S.surpriseFired[id]=true;
+  setTimeout(()=>fireSurprise(s),600);
+}
+function fireSurprise(surp){
+  document.getElementById('surp-icon').textContent=surp.icon;
+  document.getElementById('surp-title').textContent=surp.title;
+  document.getElementById('surp-text').textContent=surp.text;
+  document.getElementById('surprise-overlay').classList.add('show');
+  if(surp.effect) surp.effect();
+}
+function closeSurprise(){document.getElementById('surprise-overlay').classList.remove('show');}
+
+function showCelebrateOverlay(){
+  const btn=document.getElementById('btn-open-informe');
+  if(btn) btn.style.display='block';
+  const txt=document.getElementById('celebrate-text');
+  if(txt) txt.innerHTML=`Has respondido todas las alertas clínicas obligatorias, lograste <strong>estabilizar a Valentina</strong> y cerraste la emergencia sin perder de vista el riesgo metabólico. Ahora corresponde <strong>rescatar el informe final</strong> y desarrollar sus preguntas en tu cuaderno.`;
+  document.getElementById('celebrate-overlay').classList.add('show');
+}
+function closeCelebrateStayFinal(){
+  document.getElementById('celebrate-overlay').classList.remove('show');
+}
+function proceedToInforme(){
+  closeCelebrateStayFinal();
+  goToInforme();
+}
+
+function showAlertPopup(alertData){
+  if(popupTimeout) clearTimeout(popupTimeout);
+  const popup=document.getElementById('alert-popup');
+  document.getElementById('popup-type').textContent=alertData.typeLabel;
+  document.getElementById('popup-title').textContent=alertData.title;
+  document.getElementById('popup-sub').textContent=alertData.preview;
+  popup.className='alert-popup '+(alertData.type||'critical')+(alertData.instakill?' critical':'');
+  popup.classList.add('show');
+  popupTimeout=setTimeout(()=>popup.classList.remove('show'),5000);
+}
+function goToAlerts(){
+  document.getElementById('alert-popup').classList.remove('show');
+  switchTab('alertas',document.querySelector('.tab-btn:nth-child(2)'));
+}
+
+function addAlertToInbox(alertData,skipPopup=false){
+  if(document.getElementById('alert-'+alertData.id)) return;
+  const inbox=document.getElementById('alert-inbox');
+  const el=document.createElement('div');
+  el.className='alert-item unread'+(alertData.type==='nurse'?' nurse-blink':'');
+  el.id='alert-'+alertData.id;
+  el.innerHTML=`<div class="alert-type ${alertData.type}">${alertData.typeLabel}</div>
+    <div class="alert-title">${alertData.instakill?'⚡ ':''}${alertData.title}</div>
+    <div class="alert-preview">${alertData.preview}</div>
+    <span class="alert-badge badge-new">NUEVO</span>`;
+  el.addEventListener('click',()=>openAlert(alertData.id));
+  inbox.appendChild(el);updateAlertBadge();
+  const tabBtn=document.querySelector('.tab-btn:nth-child(2)');
+  if(tabBtn){tabBtn.style.color='var(--glow2)';setTimeout(()=>tabBtn.style.color='',1500);}
+  if(!skipPopup) showAlertPopup(alertData);
+}
+
+function updateAlertBadge(){
+  const unread=document.querySelectorAll('.alert-item.unread').length;
+  const badge=document.getElementById('alert-badge');
+  if(badge){badge.textContent=unread;badge.style.display=unread>0?'':'none';}
+}
+
+function openAlert(id){
+  const a=ALERTS.find(a=>a.id===id);if(!a) return;
+  currentAlertIdOpen=id;
+  const el=document.getElementById('alert-'+id);
+  if(el){el.classList.remove('unread','nurse-blink');const b=el.querySelector('.alert-badge');if(b)b.style.display='none';}
+  updateAlertBadge();
+  const opts=a.options?getPreparedOptions(id):[];
+  const letters=['A','B','C','D'];
+  let dataHtml='';
+  if(a.dataHighlight){dataHtml=`<div class="data-highlight">${a.dataHighlight.map(d=>`<div class="dh-row"><div class="dh-key">${d.key} <span style="color:var(--muted);font-size:9px">${d.note||''}</span></div><div class="dh-val ${d.alert?'red':''}${d.purple?' purple':''}">${d.val}</div></div>`).join('')}</div>`;}
+  let optHtml='';
+  if(a.isText){
+    const resolved=S.resolvedIds.includes(id);
+    optHtml=`<textarea class="text-area-q" id="text-ans-${id}" placeholder="${a.placeholder||''}" ${resolved?'disabled':''}></textarea>
+    ${!resolved?`<button class="btn-submit" onclick="submitTextAnswer('${id}')">REGISTRAR REFLEXIÓN →</button>`:''}
+    <div class="feedback-box ${resolved?'show correct':''}" id="fb-${id}"><div class="feedback-title">Reflexión registrada</div><div class="feedback-text">${a.feedbackText||''}</div></div>`;
+  } else if(opts.length){
+    const resolved=S.resolvedIds.includes(id);
+    if(!resolved){
+      optHtml=`<div class="question-prompt">${a.question}</div><div class="options-list">${opts.map((o,i)=>`<button class="opt-btn" id="opt-${id}-${i}" onclick="submitAnswer('${id}',${i})"><span class="opt-letter">${letters[i]}</span><span>${o.text}</span></button>`).join('')}</div><div class="feedback-box" id="fb-${id}"></div>`;
+    } else {
+      optHtml=`<div class="question-prompt">${a.question}</div><div class="options-list">${opts.map((o,i)=>`<button class="opt-btn${o.correct?' correct':''}" disabled><span class="opt-letter">${letters[i]}</span><span>${o.text}</span></button>`).join('')}</div><div class="feedback-box show correct" id="fb-${id}"><div class="feedback-title">✅ Respondido correctamente</div><div class="feedback-text">${a.feedbackOk.text}</div></div>`;
+    }
+  }
+  let timerHtml='';
+  if(a.timed&&a.timeLimit&&!S.resolvedIds.includes(id)){timerHtml=`<div class="modal-timer">⏱ TIEMPO:<span class="modal-timer-val" id="timer-val-${id}">${a.timeLimit}</span>s</div>`;}
+  const instakillWarn=a.instakill?`<div style="background:rgba(255,0,0,.15);border:2px solid #ff4040;padding:10px;margin-bottom:14px;font-family:var(--mono);font-size:11px;color:#ff6060;letter-spacing:1px">⚡ ALERTA DE MÁXIMA CRITICIDAD — Un error aquí puede ser fatal para Valentina.</div>`:'';
+  const typeClass={critical:'mtype-critical',nurse:'mtype-nurse',lab:'mtype-lab',neuro:'mtype-neuro'}[a.type]||'mtype-nurse';
+  document.getElementById('modal-inner').innerHTML=`
+    <div class="modal-type ${a.instakill?'mtype-instakill':typeClass}">${a.typeLabel}</div>
+    <div class="modal-title">${a.title}</div>
+    ${timerHtml}${instakillWarn}
+    <div class="modal-narrative">${a.narrative||''}</div>
+    ${dataHtml}${optHtml}
+    <button class="btn-close-modal" onclick="closeModal()">✕ CERRAR ALERTA</button>
+  `;
+  document.getElementById('modal').classList.add('open');
+  applyGlossary(document.getElementById('modal-inner'));
+  if(a.timed&&a.timeLimit&&!S.resolvedIds.includes(id)) startTimer(id,a.timeLimit);
+}
+
+function startTimer(id,seconds){
+  if(alertTimerInterval) clearInterval(alertTimerInterval);
+  let r=seconds;
+  const tick=()=>{
+    const el=document.getElementById('timer-val-'+id);
+    if(!el){clearInterval(alertTimerInterval);return;}
+    el.textContent=r;el.className='modal-timer-val'+(r<=10?' low':'');
+    if(r<=0){clearInterval(alertTimerInterval);if(!S.resolvedIds.includes(id)){toast('⏱ Tiempo agotado — Valentina se deteriora');updateStability(-6);updateToxina(+5);addStress();markResolved(id,false);closeModal();}}
+    r--;
+  };tick();alertTimerInterval=setInterval(tick,1000);
+}
+
+function submitAnswer(alertId,optIdx){
+  if(alertTimerInterval) clearInterval(alertTimerInterval);
+  if(S.resolvedIds.includes(alertId)) return;
+  const opts=getPreparedOptions(alertId);const chosen=opts[optIdx];const a=ALERTS.find(a=>a.id===alertId);
+  if(!chosen||!a) return;
+  document.querySelectorAll(`[id^="opt-${alertId}-"]`).forEach(b=>b.disabled=true);
+  const correct=chosen.correct;
+  document.getElementById('opt-'+alertId+'-'+optIdx)?.classList.add(correct?'correct':'incorrect');
+  if(!correct) opts.forEach((o,i)=>{if(o.correct) document.getElementById('opt-'+alertId+'-'+i)?.classList.add('correct');});
+  const fb=document.getElementById('fb-'+alertId);
+  if(fb){fb.className='feedback-box show '+(correct?'correct':'incorrect');fb.innerHTML=`<div class="feedback-title">${correct?a.feedbackOk.title:a.feedbackFail.title}</div><div class="feedback-text">${correct?a.feedbackOk.text:a.feedbackFail.text}</div>`;}
+  if(correct){a.onCorrect&&a.onCorrect();markResolved(alertId,true);}
+  else{a.onFail&&a.onFail();if(a.instakill){triggerDeath(a.feedbackFail.text);return;}addStress();markResolved(alertId,false);}
+  saveGame();
+}
+
+function submitTextAnswer(alertId){
+  const ta=document.getElementById('text-ans-'+alertId);
+  if(!ta||ta.value.trim().length<15){toast('Escribe una explicación más desarrollada');return;}
+  const fb=document.getElementById('fb-'+alertId);if(fb) fb.className='feedback-box show correct';
+  ta.disabled=true;
+  document.querySelector(`[onclick="submitTextAnswer('${alertId}')"]`)?.setAttribute('disabled','true');
+  const a=ALERTS.find(a=>a.id===alertId);if(a&&a.onSubmit) a.onSubmit();
+  markResolved(alertId,true);saveGame();
+}
+
+function markResolved(id,correct){
+  const el=document.getElementById('alert-'+id);
+  if(el){el.classList.remove('unread','nurse-blink');el.classList.add('resolved');
+    const badge=el.querySelector('.alert-badge');
+    if(badge){badge.className='alert-badge badge-ok';badge.textContent=correct?'✓ OK':'✗';badge.style.display='';}}
+  if(correct&&!S.resolvedIds.includes(id)){S.resolvedIds.push(id);S.alertsResolved++;S.totalCorrect++;}
+  else if(!correct&&!S.resolvedIds.includes(id)){S.resolvedIds.push(id);S.alertsResolved++;}
+  checkPhaseProgression();
+  if(getAnsweredRequiredCount()>=getRequiredAlerts().length) document.getElementById('all-done-msg').style.display='block';
+}
+
+function openHintModal(content){
+  document.getElementById('modal-inner').innerHTML=`<div class="modal-type mtype-neuro">💡 CONCEPTO CLAVE</div><div class="modal-title">Pista Endocrina</div><div class="modal-narrative">${content}</div><button class="btn-close-modal" onclick="closeModal()">✕ CERRAR</button>`;
+  document.getElementById('modal').classList.add('open');
+  applyGlossary(document.getElementById('modal-inner'));
+}
+function closeModal(){if(alertTimerInterval)clearInterval(alertTimerInterval);document.getElementById('modal').classList.remove('open');currentAlertIdOpen=null;}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+function setPhase(n){
+  S.phase=n;
+  const el=document.getElementById('hud-phase');if(el) el.textContent='FASE '+n;
+  const labels={
+    1:'🟡 FASE 1 — EVALUACIÓN INICIAL: Revisa el expediente y responde las primeras alertas del box 4.',
+    2:'🟠 FASE 2 — LABORATORIO METABÓLICO: Los resultados revelan el patrón hormonal y la pérdida de homeostasis.',
+    3:'🔴 FASE 3 — CRISIS METABÓLICA: Conecta insulina, cetonas, riñón, respiración y conciencia.',
+    4:'🟢 FASE 4 — CIERRE CLÍNICO: Valentina se estabiliza. Cierra la emergencia y rescata el informe.',
+  };
+  const notice=document.getElementById('phase-notice');if(notice&&labels[n]) notice.innerHTML=labels[n];
+}
+
+function initInvestigation(){
+  document.getElementById('invest-grid').innerHTML=INVEST_AREAS.map(a=>`
+    <div class="invest-btn ${a.locked?'locked-inv':''}" id="ibtn-${a.id}" onclick="openInvestArea('${a.id}')">
+      <div class="invest-icon">${a.icon}</div>
+      <div class="invest-label">${a.label}</div>
+      <div class="invest-status">${a.locked?'🔒 BLOQUEADO':'Disponible'}</div>
+    </div>`).join('');
+}
+function unlockInvestArea(id){
+  const area=INVEST_AREAS.find(a=>a.id===id);if(!area) return;area.locked=false;
+  const btn=document.getElementById('ibtn-'+id);
+  if(btn){btn.classList.remove('locked-inv');btn.querySelector('.invest-status').textContent='Disponible';}
+}
+function openInvestArea(id){
+  const area=INVEST_AREAS.find(a=>a.id===id);if(!area) return;
+  if(area.locked){toast('Esta sección se desbloqueará más adelante.');return;}
+  const btn=document.getElementById('ibtn-'+id);if(btn) btn.classList.add('unlocked');
+  if(!S.investUnlocked.includes(id)){S.investUnlocked.push(id);area.effect&&area.effect();}
+  document.getElementById('modal-inner').innerHTML=`<div class="modal-type mtype-neuro">🔍 INVESTIGACIÓN</div><div class="modal-title">${area.title}</div><div class="modal-narrative">${area.content}</div><button class="btn-close-modal" onclick="closeModal()">✕ CERRAR</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function initHelps(){
+  document.getElementById('help-section').innerHTML=HELPS.map(h=>`
+    <div class="help-card"><div class="help-icon">${h.icon}</div>
+      <div><div class="help-name">${h.name}</div><div class="help-desc">${h.desc}</div>
+      <div class="help-uses" id="help-uses-${h.id}">Usos: ${S.helpUses[h.id]}</div>
+      <button class="btn-use-help" id="help-btn-${h.id}" onclick="useHelp('${h.id}')" ${S.helpUses[h.id]<=0?'disabled':''}>USAR AYUDA</button></div>
+    </div>`).join('');
+}
+function useHelp(id){
+  if(S.helpUses[id]<=0){toast('Ya usaste todas las instancias de esta ayuda');return;}
+  S.helpUses[id]--;document.getElementById('help-uses-'+id).textContent=`Usos: ${S.helpUses[id]}`;
+  if(S.helpUses[id]===0) document.getElementById('help-btn-'+id).disabled=true;
+  HELPS.find(h=>h.id===id)?.fn();
+}
+
+function populateFinalStats(){
+  document.getElementById('fs-stability').textContent=Math.round(S.stability)+'%';
+  document.getElementById('fs-alerts').textContent=getAnsweredRequiredCount()+'/'+getRequiredAlerts().length;
+  document.getElementById('fs-errors').textContent=S.errors;
+}
+function goToFinal(){
+  if(!S.canGoInforme){
+    toast('Aún debes responder todas las alertas obligatorias antes de estabilizar a Valentina.');
+    return;
+  }
+  S.caseClosed=true;
+  populateFinalStats();
+  showScreen('s-final');
+  if(!S.congratsShown){
+    S.congratsShown=true;
+    setTimeout(showCelebrateOverlay,280);
+  }else{
+    const btn=document.getElementById('btn-open-informe');
+    if(btn) btn.style.display='block';
+  }
+  saveGame();
+}
+function goToInforme(){
+  if(!S.caseClosed){
+    toast('Primero debes responder todo y estabilizar a Valentina antes de ingresar al informe final.');
+    return;
+  }
+  closeCelebrateStayFinal();
+  showScreen('s-informe');
+}
+function submitInforme(){
+  populateFinalStats();
+  showScreen('s-final');
+}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function switchTab(name,btnEl){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btnEl) btnEl.classList.add('active');
+}
+let toastTimer=null;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('visible');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),3200);}
+
+function restartGame(){
+  phaseTimers.forEach(t=>clearTimeout(t));phaseTimers=[];
+  if(alertTimerInterval) clearInterval(alertTimerInterval);
+  Object.assign(S,{name:'',stability:32,fr:28,toxina:386,conciencia:4,sinapsis:'+++',phase:1,alertsResolved:0,totalCorrect:0,errors:0,investUnlocked:[],helpUses:{adjunto:1,pista:2,examen:1},surpriseFired:{},phasesUnlocked:{1:false,2:false,3:false,4:false},canGoInforme:false,caseClosed:false,congratsShown:false,startTime:null,optionOrder:{},resolvedIds:[],stressLevel:0,});
+  INVEST_AREAS.forEach(a=>{if(a.id==='familia') a.locked=true;});
+  clearSave();
+  const entry=document.getElementById('residentNameEntry');if(entry) entry.value='';
+  const btn=document.getElementById('btnCheckin');if(btn) btn.disabled=true;
+  document.getElementById('informe-btn-wrap').style.display='none';
+  const openInformeBtn=document.getElementById('btn-open-informe'); if(openInformeBtn) openInformeBtn.style.display='none';
+  document.getElementById('celebrate-overlay').classList.remove('show');
+  document.getElementById('alert-inbox').innerHTML='';
+  document.getElementById('all-done-msg').style.display='none';
+  document.getElementById('alert-badge').style.display='none';
+  document.querySelectorAll('.inf-textarea').forEach(t=>t.value='');
+  updateFR(0);updateToxina(0);updateConciencia(0);updateSinapsis('+++');renderStress();updateStabilityDisplay();updateStabilizeButtonUI();
+  showScreen('s-cover');
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('alert-badge').style.display='none';
+  updateStabilizeButtonUI();
+  applyGlossary(document.body);
+  const entry=document.getElementById('residentNameEntry');const btn=document.getElementById('btnCheckin');
+  if(entry&&btn) entry.addEventListener('input',e=>{btn.disabled=!e.target.value.trim();});
+});
+</script>
+</body>
+</html>
