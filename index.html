@@ -537,7 +537,7 @@ svg.eeg path{animation:eegAnim 2.5s linear infinite;}
           <div class="data-grid">
             <div class="data-cell"><div class="dc-label">PACIENTE</div><div class="dc-val" style="color:var(--text)">Valentina R.</div></div>
             <div class="data-cell"><div class="dc-label">EDAD</div><div class="dc-val">16 años</div></div>
-            <div class="data-cell"><div class="dc-label">F.R. INGRESO</div><div class="dc-val alert">8 resp/min</div></div>
+            <div class="data-cell"><div class="dc-label">F.R. INGRESO</div><div class="dc-val alert">28 resp/min</div></div>
             <div class="data-cell"><div class="dc-label">CONCIENCIA</div><div class="dc-val alert">Confusa · responde lento</div></div>
           </div>
           <hr class="divider">
@@ -618,6 +618,7 @@ svg.eeg path{animation:eegAnim 2.5s linear infinite;}
     <button class="btn-submit-informe" onclick="goToFinal()">↩ VOLVER AL CIERRE DEL CASO</button>
     <div style="height:40px"></div>
   </div>
+</div>
 
 <!-- ─── FINAL ─── -->
 <div id="s-final" class="screen">
@@ -725,14 +726,27 @@ function applyGlossary(root=document.body){
   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode(node){
     const parent=node.parentElement;
     if(!parent||!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-    if(parent.closest('script,style,textarea,input,.glossary-term,#glossary-backdrop')) return NodeFilter.FILTER_REJECT;
+    // Glosario seguro: nunca interviene botones, tarjetas de alerta, alternativas, inputs o elementos con onclick.
+    if(parent.closest('script,style,textarea,input,select,button,a,.opt-btn,.alert-item,.tab-btn,.invest-btn,.btn-submit,.btn-submit-informe,.btn-close-modal,.epic-btn,.glossary-term,#glossary-backdrop,[onclick]')) return NodeFilter.FILTER_REJECT;
     return GLOSSARY_TERMS.some(({term})=>glossaryRegex(term).test(node.nodeValue))?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT;
   }});
   const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
   nodes.forEach(node=>{
     let html=node.nodeValue;
-    GLOSSARY_TERMS.forEach(({term,id})=>{html=html.replace(glossaryRegex(term),(m,prefix,found)=>`${prefix}<span class="glossary-term" tabindex="0" role="button" data-glossary="${id}">${found}</span>`);});
-    if(html!==node.nodeValue){const tpl=document.createElement('template');tpl.innerHTML=html;node.replaceWith(tpl.content.cloneNode(true));}
+    GLOSSARY_TERMS.forEach(({term,id})=>{
+      html=html.replace(glossaryRegex(term),(m,prefix,found)=>`${prefix}<span class="glossary-term" tabindex="0" role="button" data-glossary="${id}">${found}</span>`);
+    });
+    if(html!==node.nodeValue){
+      const tpl=document.createElement('template');
+      tpl.innerHTML=html;
+      node.replaceWith(tpl.content.cloneNode(true));
+    }
+  });
+}
+function applyGlossaryStatic(){
+  ['#tab-expediente .card-body','#s-informe .informe-body'].forEach(sel=>{
+    const el=document.querySelector(sel);
+    if(el) applyGlossary(el);
   });
 }
 function openGlossary(id){
@@ -757,7 +771,7 @@ const S={
   phase:1,alertsResolved:0,totalCorrect:0,errors:0,
   investUnlocked:[],helpUses:{adjunto:1,pista:2,examen:1},
   surpriseFired:{},phasesUnlocked:{1:false,2:false,3:false,4:false},
-  canGoInforme:false,caseClosed:false,congratsShown:false,startTime:null,optionOrder:{},resolvedIds:[],stressLevel:0,
+  canGoInforme:false,caseClosed:false,congratsShown:false,startTime:null,optionOrder:{},resolvedIds:[],stressLevel:0,currentAlertIndex:0,isDead:false,
 };
 function saveGame(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({...S,ts:Date.now()}));}catch(e){}}
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}}
@@ -1402,11 +1416,17 @@ function renderStress(){
 function addStress(){
   S.stressLevel++;S.errors++;renderStress();
   const flash=document.getElementById('wrong-flash');flash.style.display='block';setTimeout(()=>{flash.style.display='none';},700);
-  if(S.stressLevel>=3){setTimeout(()=>triggerDeath('Las decisiones clínicas incorrectas permitieron que la crisis metabólica siguiera avanzando. La deshidratación, la acidosis y el compromiso de conciencia terminaron en colapso.'),1200);}
+  if(S.stressLevel>=3){
+    S.isDead=true;
+    setTimeout(()=>triggerDeath('Las decisiones clínicas incorrectas permitieron que la crisis metabólica siguiera avanzando. La deshidratación, la acidosis y el compromiso de conciencia terminaron en colapso.'),900);
+  }
   else{const msgs=['⚠ Error clínico — La crisis metabólica avanza en Valentina','⚠ Segundo error — Estado metabólico se deteriora. Actúa mejor.'];toast(msgs[S.stressLevel-1]||'⚠ Error clínico');}
 }
 
 function triggerDeath(cause){
+  S.isDead=true;
+  S.canGoInforme=false;
+  S.caseClosed=false;
   document.getElementById('death-cause-text').textContent=cause||'Las decisiones clínicas incorrectas causaron el deterioro metabólico de Valentina.';
   document.getElementById('death-alerts').textContent=S.alertsResolved+'/'+getRequiredAlerts().length;
   document.getElementById('death-errors').textContent=S.errors;
@@ -1465,48 +1485,56 @@ function getPreparedOptions(id){
 }
 
 function initAlerts(){
-  const inbox=document.getElementById('alert-inbox');inbox.innerHTML='';
+  const inbox=document.getElementById('alert-inbox');
+  if(inbox) inbox.innerHTML='';
   S.alertsResolved=0;S.totalCorrect=0;S.optionOrder={};
-  S.phasesUnlocked={1:false,2:false,3:false,4:false};S.surpriseFired={};S.resolvedIds=[];
+  S.surpriseFired={};S.resolvedIds=[];S.currentAlertIndex=0;S.canGoInforme=false;S.caseClosed=false;S.congratsShown=false;S.isDead=false;
+  S.phasesUnlocked={1:true,2:false,3:false,4:false};
   phaseTimers.forEach(t=>clearTimeout(t));phaseTimers=[];
-  const p1=ALERTS.filter(a=>a.phase===1);
-  p1.forEach((a,i)=>{const t=setTimeout(()=>addAlertToInbox(a),i*700);phaseTimers.push(t);});
-  S.phasesUnlocked[1]=true;setPhase(1);
-  const t2=setTimeout(()=>{if(!S.phasesUnlocked[2])unlockPhase(2);},22000);phaseTimers.push(t2);
-  const t3=setTimeout(()=>{if(!S.phasesUnlocked[3])unlockPhase(3);},55000);phaseTimers.push(t3);
-  const t4=setTimeout(()=>{if(!S.phasesUnlocked[4])unlockPhase(4);},100000);phaseTimers.push(t4);
-  const ts=setTimeout(()=>maybeFire('s5'),20000);phaseTimers.push(ts);
+  const done=document.getElementById('all-done-msg'); if(done) done.style.display='none';
+  updateAlertBadge();
+  setPhase(1);
+  if(ALERTS.length>0){
+    addAlertToInbox(ALERTS[0]);
+    toast('🚨 Primera alerta liberada. Responde para desbloquear la siguiente.');
+  }
   updateStabilizeButtonUI();
 }
 
 function unlockPhase(phase){
   if(S.phasesUnlocked[phase]) return;
-  S.phasesUnlocked[phase]=true;setPhase(phase);
-  toast({2:'🟠 FASE 2 — Laboratorio metabólico. El patrón hormonal queda al descubierto.',3:'🔴 FASE 3 — Crisis metabólica. Valentina necesita decisiones finas.',4:'🟢 FASE 4 — Integración endocrina. Prepárate para cerrar la emergencia.'}[phase]||'');
-  ALERTS.filter(a=>a.phase===phase).forEach((a,i)=>{const t=setTimeout(()=>addAlertToInbox(a),i*600);phaseTimers.push(t);});
+  S.phasesUnlocked[phase]=true;
+  setPhase(phase);
+  const msg={2:'🟠 FASE 2 — Laboratorio metabólico. El patrón hormonal queda al descubierto.',3:'🔴 FASE 3 — Crisis metabólica. Valentina necesita decisiones finas.',4:'🟢 FASE 4 — Integración endocrina. Prepárate para cerrar la emergencia.'}[phase]||'';
+  if(msg) toast(msg);
 }
 
 function checkPhaseProgression(){
   const answered=getAnsweredRequiredCount();
-  if(answered>=4&&!S.phasesUnlocked[2]) unlockPhase(2);
-  if(answered>=8&&!S.phasesUnlocked[3]) unlockPhase(3);
-  if(answered>=14&&!S.phasesUnlocked[4]) unlockPhase(4);
-  if(answered===2) setTimeout(()=>maybeFire('alerts2'),500);
-  if(answered===3) setTimeout(()=>maybeFire('alerts3'),500);
-  if(answered===5) setTimeout(()=>{maybeFire('phase2');maybeFire('phase2b');},500);
-  if(answered===6) setTimeout(()=>maybeFire('alerts6'),500);
-  if(answered===9) setTimeout(()=>{maybeFire('alerts9');maybeFire('phase3b');},500);
-  if(answered===11) setTimeout(()=>maybeFire('alerts11'),500);
-  if(answered>=13&&!S.surpriseFired['phase3']) setTimeout(()=>maybeFire('phase3'),500);
-  if(answered>=17&&!S.surpriseFired['phase4']) setTimeout(()=>maybeFire('phase4'),500);
+  if(answered>=4) unlockPhase(2);
+  if(answered>=12) unlockPhase(3);
+  if(answered>=18) unlockPhase(4);
+
+  // Notificaciones narrativas por hitos: aportan pistas y mantienen el caso vivo.
+  const milestoneMap={
+    2:'alerts2',
+    3:'alerts3',
+    6:'alerts6',
+    9:'alerts9',
+    12:'phase3',
+    15:'phase3b',
+    18:'phase4',
+    22:'phase2b',
+    25:'alerts11'
+  };
+  if(milestoneMap[answered]) setTimeout(()=>maybeFire(milestoneMap[answered]),350);
 
   const total=getRequiredAlerts().length;
-  if(answered>=total&&!S.canGoInforme){
+  if(answered>=total&&!S.canGoInforme&&!S.isDead){
     S.canGoInforme=true;
-    toast('🎉 Todas las alertas obligatorias ya fueron respondidas. Valentina sigue con vida: ahora puedes estabilizarlo y abrir el informe final.');
-  }
-  if(answered>=total){
-    document.getElementById('all-done-msg').style.display='block';
+    const done=document.getElementById('all-done-msg');
+    if(done) done.style.display='block';
+    toast('🎉 Todas las alertas obligatorias ya fueron respondidas. Valentina sigue con vida: ahora puedes estabilizarla y abrir el informe final.');
   }
   updateStabilizeButtonUI();
 }
@@ -1617,7 +1645,7 @@ function openAlert(id){
     <button class="btn-close-modal" onclick="closeModal()">✕ CERRAR ALERTA</button>
   `;
   document.getElementById('modal').classList.add('open');
-  applyGlossary(document.getElementById('modal-inner'));
+  document.querySelectorAll('#modal-inner .modal-narrative,#modal-inner .data-highlight,#modal-inner .question-prompt').forEach(el=>applyGlossary(el));
   if(a.timed&&a.timeLimit&&!S.resolvedIds.includes(id)) startTimer(id,a.timeLimit);
 }
 
@@ -1664,16 +1692,36 @@ function markResolved(id,correct){
   if(el){el.classList.remove('unread','nurse-blink');el.classList.add('resolved');
     const badge=el.querySelector('.alert-badge');
     if(badge){badge.className='alert-badge badge-ok';badge.textContent=correct?'✓ OK':'✗';badge.style.display='';}}
-  if(correct&&!S.resolvedIds.includes(id)){S.resolvedIds.push(id);S.alertsResolved++;S.totalCorrect++;}
-  else if(!correct&&!S.resolvedIds.includes(id)){S.resolvedIds.push(id);S.alertsResolved++;}
+  if(!S.resolvedIds.includes(id)){
+    S.resolvedIds.push(id);
+    S.alertsResolved++;
+    if(correct) S.totalCorrect++;
+  }
+
+  // Avance secuencial: solo se libera la siguiente alerta cuando la actual ya fue respondida.
+  const currentIdx=ALERTS.findIndex(a=>a.id===id);
+  const nextIdx=currentIdx+1;
+  if(!S.isDead && nextIdx<ALERTS.length){
+    S.currentAlertIndex=nextIdx;
+    const nextAlert=ALERTS[nextIdx];
+    if(nextAlert.phase && nextAlert.phase!==S.phase) unlockPhase(nextAlert.phase);
+    setTimeout(()=>{
+      if(!S.isDead) addAlertToInbox(nextAlert);
+    },650);
+  }
+
   checkPhaseProgression();
-  if(getAnsweredRequiredCount()>=getRequiredAlerts().length) document.getElementById('all-done-msg').style.display='block';
+  if(getAnsweredRequiredCount()>=getRequiredAlerts().length){
+    const done=document.getElementById('all-done-msg');
+    if(done) done.style.display='block';
+  }
+  saveGame();
 }
 
 function openHintModal(content){
   document.getElementById('modal-inner').innerHTML=`<div class="modal-type mtype-neuro">💡 CONCEPTO CLAVE</div><div class="modal-title">Pista Endocrina</div><div class="modal-narrative">${content}</div><button class="btn-close-modal" onclick="closeModal()">✕ CERRAR</button>`;
   document.getElementById('modal').classList.add('open');
-  applyGlossary(document.getElementById('modal-inner'));
+  document.querySelectorAll('#modal-inner .modal-narrative,#modal-inner .data-highlight,#modal-inner .question-prompt').forEach(el=>applyGlossary(el));
 }
 function closeModal(){if(alertTimerInterval)clearInterval(alertTimerInterval);document.getElementById('modal').classList.remove('open');currentAlertIdOpen=null;}
 function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
@@ -1710,6 +1758,7 @@ function openInvestArea(id){
   if(!S.investUnlocked.includes(id)){S.investUnlocked.push(id);area.effect&&area.effect();}
   document.getElementById('modal-inner').innerHTML=`<div class="modal-type mtype-neuro">🔍 INVESTIGACIÓN</div><div class="modal-title">${area.title}</div><div class="modal-narrative">${area.content}</div><button class="btn-close-modal" onclick="closeModal()">✕ CERRAR</button>`;
   document.getElementById('modal').classList.add('open');
+  document.querySelectorAll('#modal-inner .modal-narrative,#modal-inner .data-highlight').forEach(el=>applyGlossary(el));
 }
 
 function initHelps(){
@@ -1775,7 +1824,7 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 function restartGame(){
   phaseTimers.forEach(t=>clearTimeout(t));phaseTimers=[];
   if(alertTimerInterval) clearInterval(alertTimerInterval);
-  Object.assign(S,{name:'',stability:32,fr:28,toxina:386,conciencia:4,sinapsis:'+++',phase:1,alertsResolved:0,totalCorrect:0,errors:0,investUnlocked:[],helpUses:{adjunto:1,pista:2,examen:1},surpriseFired:{},phasesUnlocked:{1:false,2:false,3:false,4:false},canGoInforme:false,caseClosed:false,congratsShown:false,startTime:null,optionOrder:{},resolvedIds:[],stressLevel:0,});
+  Object.assign(S,{name:'',stability:32,fr:28,toxina:386,conciencia:4,sinapsis:'+++',phase:1,alertsResolved:0,totalCorrect:0,errors:0,investUnlocked:[],helpUses:{adjunto:1,pista:2,examen:1},surpriseFired:{},phasesUnlocked:{1:false,2:false,3:false,4:false},canGoInforme:false,caseClosed:false,congratsShown:false,startTime:null,optionOrder:{},resolvedIds:[],stressLevel:0,currentAlertIndex:0,isDead:false,});
   INVEST_AREAS.forEach(a=>{if(a.id==='familia') a.locked=true;});
   clearSave();
   const entry=document.getElementById('residentNameEntry');if(entry) entry.value='';
@@ -1794,7 +1843,7 @@ function restartGame(){
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('alert-badge').style.display='none';
   updateStabilizeButtonUI();
-  applyGlossary(document.body);
+  applyGlossaryStatic();
   const entry=document.getElementById('residentNameEntry');const btn=document.getElementById('btnCheckin');
   if(entry&&btn) entry.addEventListener('input',e=>{btn.disabled=!e.target.value.trim();});
 });
